@@ -146,8 +146,9 @@
       <a href="https://scholar.google.com/citations?user=fMmoHX0AAAAJ&amp;hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Arthur Moreau</a>,
       <a href="https://apapaion.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Athanasios Papaioannou</a>,
       <a href="https://thomas-tanay.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Thomas Tanay</a>,
-      <a href="https://zhangzhensong.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Zhang Zhensong</a>, and
-      <a href="https://perezpellitero.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Eduardo Pérez-Pellitero</a>
+      <a href="https://zhangzhensong.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Zhang Zhensong</a>,
+      <br />
+      <span class="inline-block whitespace-nowrap">and <a href="https://perezpellitero.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Eduardo Pérez-Pellitero</a></span>
     </p>
 
     <!-- Affiliation -->
@@ -227,13 +228,19 @@
     <!-- Method Overview: figure stored in the site repository root -->
     <div class="mt-12 pt-8 border-t border-slate-200">
       <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-4">Method Overview</h2>
-      <img
-        src="./WildAnySplat_method.png"
-        alt="WildAnySplat method overview diagram"
-        class="block w-full h-auto rounded-xl border border-slate-200 shadow-md"
-        loading="lazy"
-        decoding="async"
-      />
+      <figure>
+        <img
+          src="./WildAnySplat_method.png"
+          alt="WildAnySplat method overview diagram"
+          class="block w-full h-auto rounded-xl border border-slate-200 shadow-md"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption class="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed text-justify">
+          <strong class="font-semibold text-slate-700">Method overview.</strong>
+          WildAnySplat trains a student network to reconstruct feed-forward 3D Gaussians from in-the-wild images containing transient occluders and appearance variation. A frozen clean-image teacher provides camera and depth supervision, while the student predicts Gaussians, transient masks, and per-view bilateral grids. The transient masks downweight unreliable regions during photometric training and voxel fusion, while bilateral grids map canonical Gaussian renderings into each input image’s appearance domain, enabling robust geometry and consistent canonical colors.
+        </figcaption>
+      </figure>
     </div>
   </section>
 
@@ -257,12 +264,12 @@
             <i id="global-play-icon" class="fa-solid fa-pause"></i>
             <span id="global-play-text">Pause All</span>
           </button>
-          <button id="speed-slow-btn" onclick="setGlobalSpeed(0.4)" class="px-2.5 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition">
-            0.4× Slow-Mo
-          </button>
-          <button id="speed-norm-btn" onclick="setGlobalSpeed(1.0)" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-amber-400 text-xs font-semibold border border-amber-500/40 transition">
-            1.0× Speed
-          </button>
+          <div class="flex flex-wrap items-center gap-1" role="group" aria-label="Comparison video playback speed">
+            <button type="button" data-speed="0.5" onclick="setGlobalSpeed(0.5)" aria-pressed="false" class="speed-btn px-2.5 py-1.5 rounded-lg border border-transparent bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition">0.5×</button>
+            <button type="button" data-speed="1" onclick="setGlobalSpeed(1)" aria-pressed="true" class="speed-btn px-2.5 py-1.5 rounded-lg border border-amber-500/40 bg-slate-900 text-amber-400 text-xs font-semibold transition">1×</button>
+            <button type="button" data-speed="1.5" onclick="setGlobalSpeed(1.5)" aria-pressed="false" class="speed-btn px-2.5 py-1.5 rounded-lg border border-transparent bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition">1.5×</button>
+            <button type="button" data-speed="2" onclick="setGlobalSpeed(2)" aria-pressed="false" class="speed-btn px-2.5 py-1.5 rounded-lg border border-transparent bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition">2×</button>
+          </div>
           <button onclick="centerAllSliders()" class="px-2.5 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition">
             Center Sliders
           </button>
@@ -307,7 +314,7 @@
 
       <!-- Clicking a preview swaps its scene with the featured comparison. -->
       <p class="text-sm text-slate-300 mb-4">Click a smaller result to show it above. The previous large result moves into its place.</p>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- RealX3D MilkCookie -->
         <div class="relative rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between transition-colors hover:bg-slate-800 hover:border-emerald-500/70 focus-within:ring-2 focus-within:ring-emerald-400 focus-within:ring-offset-2 focus-within:ring-offset-slate-900">
           <div>
@@ -379,6 +386,29 @@
           </div>
           <button type="button" id="scene-select-3" onclick="promoteComparison(3)" aria-label="Show Phototourism Brandenburg Gate in the large comparison" class="absolute inset-0 z-40 w-full h-full rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"></button>
         </div>
+        <!-- Phototourism Sacre Coeur -->
+        <div class="relative rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between transition-colors hover:bg-slate-800 hover:border-emerald-500/70 focus-within:ring-2 focus-within:ring-emerald-400 focus-within:ring-offset-2 focus-within:ring-offset-slate-900">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h4 id="preview-scene-title-4" class="font-bold text-sm sm:text-base text-white">Phototourism — Sacré-Cœur</h4>
+              <span class="text-[11px] text-emerald-300 font-semibold whitespace-nowrap pt-0.5"><i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>Enlarge</span>
+            </div>
+            <div class="comparison-container aspect-[16/10] w-full" data-slider-index="4">
+              <div id="comp-video-wrap-4" class="absolute inset-0 w-full h-full">
+                <video id="comp-vid-right-4" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline>
+                  <source src="./sacre_coeur_rgb_wasp.mp4" type="video/mp4" />
+                </video>
+                <video id="comp-vid-left-4" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay loop muted playsinline>
+                  <source src="./sacre_coeur_rgb_asp.mp4" type="video/mp4" />
+                </video>
+              </div>
+              <div class="absolute top-2 left-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-rose-300 text-[11px] font-bold">AnySplat</div>
+              <div class="absolute top-2 right-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-emerald-300 text-[11px] font-bold">WildAnySplat</div>
+              <div id="divider-4" class="slider-divider" style="left: 50%;"></div>
+            </div>
+          </div>
+          <button type="button" id="scene-select-4" onclick="promoteComparison(4)" aria-label="Show Phototourism Sacré-Cœur in the large comparison" class="absolute inset-0 z-40 w-full h-full rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"></button>
+        </div>
       </div>
     </div>
   </section>
@@ -426,16 +456,16 @@
   <script>
     let globalPaused = false;
     let globalSpeed = 1.0;
-    const sliderPositions = [0.5, 0.5, 0.5, 0.5];
-
     const comparisonScenes = [
       { title: 'RealX3D — Limon', shortLabel: 'RealX3D Limon', asp: './limon_rgb_asp.mp4', wasp: './limon_rgb_wasp.mp4' },
       { title: 'RealX3D — MilkCookie', shortLabel: 'RealX3D MilkCookie', asp: './milkcookie_rgb_asp.mp4', wasp: './milkcookie_rgb_wasp.mp4' },
       { title: 'RealX3D — GearWorks', shortLabel: 'RealX3D GearWorks', asp: './gearworks_rgb_asp.mp4', wasp: './gearworks_rgb_wasp.mp4' },
       { title: 'Phototourism — Brandenburg Gate', shortLabel: 'Phototourism Brandenburg Gate', asp: './brandenburg_gate_rgb_asp.mp4', wasp: './brandenburg_gate_rgb_wasp.mp4' },
+      { title: 'Phototourism — Sacré-Cœur', shortLabel: 'Phototourism Sacré-Cœur', asp: './sacre_coeur_rgb_asp.mp4', wasp: './sacre_coeur_rgb_wasp.mp4' },
     ];
-    // Slot 0 is the large viewer; 1-3 are selectable preview slots.
-    const sceneInSlot = [0, 1, 2, 3];
+    // Slot 0 is the large viewer; the remaining slots are selectable previews.
+    const sceneInSlot = comparisonScenes.map((_, index) => index);
+    const sliderPositions = comparisonScenes.map(() => 0.5);
 
     function updateVideoSource(video, filename) {
       if (!video) return;
@@ -465,7 +495,7 @@
     }
 
     function promoteComparison(previewSlot) {
-      if (previewSlot < 1 || previewSlot > 3) return;
+      if (previewSlot < 1 || previewSlot >= sceneInSlot.length) return;
       // Swap slots so the outgoing featured scene remains selectable below.
       [sceneInSlot[0], sceneInSlot[previewSlot]] =
         [sceneInSlot[previewSlot], sceneInSlot[0]];
@@ -513,7 +543,7 @@
     }
 
     function centerAllSliders() {
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < sceneInSlot.length; i++) {
         sliderPositions[i] = 0.5;
         const divider = document.getElementById(`divider-${i}`);
         const handle = document.getElementById(`handle-${i}`);
@@ -538,16 +568,22 @@
 
     function setGlobalSpeed(speed) {
       globalSpeed = speed;
-      const slowBtn = document.getElementById('speed-slow-btn');
-      const normBtn = document.getElementById('speed-norm-btn');
-      if (speed < 1) {
-        slowBtn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-900 text-amber-400 text-xs font-semibold border border-amber-500/40 transition';
-        normBtn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition';
-      } else {
-        normBtn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-900 text-amber-400 text-xs font-semibold border border-amber-500/40 transition';
-        slowBtn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition';
-      }
-      document.querySelectorAll('video').forEach(v => { v.playbackRate = speed; });
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        const isSelected = Number(btn.dataset.speed) === speed;
+        btn.setAttribute('aria-pressed', String(isSelected));
+        btn.classList.toggle('bg-slate-900', isSelected);
+        btn.classList.toggle('text-amber-400', isSelected);
+        btn.classList.toggle('font-semibold', isSelected);
+        btn.classList.toggle('border-amber-500/40', isSelected);
+        btn.classList.toggle('bg-slate-700/70', !isSelected);
+        btn.classList.toggle('hover:bg-slate-700', !isSelected);
+        btn.classList.toggle('text-slate-200', !isSelected);
+        btn.classList.toggle('font-medium', !isSelected);
+        btn.classList.toggle('border-transparent', !isSelected);
+      });
+      document.querySelectorAll('.comparison-container video').forEach(video => {
+        video.playbackRate = speed;
+      });
     }
 
     function copySnippet(elementId, btn) {
