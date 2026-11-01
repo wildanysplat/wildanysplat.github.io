@@ -1,743 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
-        window.__firebase_config = firebaseConfig;
-        window.__initial_auth_token = initialAuthToken;
-        window.__app_id = appId;
-            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwODU5NTg4MzM0NTEyMDg4NTE3NSIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzg3N2M2MjI0YTE4NjYxMjRfaW5kZXguaHRtbC04NzkifSwiZXhwIjoxNzkzNTU5MzUwLCJpYXQiOjE3OTM1NTU3NTAsImFsZyI6IlJTMjU2In0.L0bCcikOBDEUjMtIU8waqTq-7glXLRg5om_G-Cex8Xxj9WLFp19xhltKm3Yz6JXS7cKr14tawNZX15f4LVR1IPGzAOfd8FNFp2vDufesUiim2FeoWDN2Nmtxu-hHLeLUPsHY-Tt00Jt0U3aveU00KqE8MiEw78r3cNWUG1kDyxAWp2uWdLG_TphszeI2WQTtRzqOZkkIjp0b1sfZnP8SKPNqSqZAQgwLCTRwv22KT93dpz3NycEfXQVZ2EOPiCZgrAqHev08zVi9KhvRNrjsF3DhtqLN9iqQoc7Qk4M2hOFe7xmKLLYxIvtdfh345Ssx7W9SYFZewEo3siT9py3ajg","c_877c6224a1866124_index.html-879")</script><script data-bard-client-injected="true">
-  document.addEventListener('input', (event) => {
-    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
-      const clonedDoc = document.cloneNode(true);
-      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
-      injectedScripts.forEach(el => el.remove());
-      window.parent.postMessage({
-        type: 'inlineEdit',
-        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
-      }, '*');
-    }
-  });
-</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const SCROLL_KEYS = new Set([
-    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
-  ]);
-  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
-
-  function isTextEntryTarget(target) {
-    if (!target) return false;
-    const tagName = target.tagName;
-    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
-        tagName === 'SELECT' || target.isContentEditable === true;
-  }
-
-  // An element absorbs the key only if it both overflows on the axis being
-  // scrolled and is configured to scroll on that axis. The cheap dimension
-  // test runs first because getComputedStyle forces a style recalc, and this
-  // runs on every keypress. Each axis is read from its own longhand: the
-  // 'overflow' shorthand serializes as two values when the axes differ, which
-  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
-  function canScroll(node, horizontal) {
-    const overflows = horizontal ? node.scrollWidth > node.clientWidth
-                                 : node.scrollHeight > node.clientHeight;
-    if (!overflows) return false;
-    const style = window.getComputedStyle(node);
-    const overflow = horizontal ? style.overflowX : style.overflowY;
-    return overflow === 'auto' || overflow === 'scroll';
-  }
-
-  // Walks up from the event target so nested scrollers keep their behavior.
-  // <body> is included because pages that pin the root height make it the
-  // scroll container.
-  function hasScrollableAncestor(target, horizontal) {
-    let node = target;
-    while (node && node !== document.documentElement) {
-      if (canScroll(node, horizontal)) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
-
-  function rootCanScroll(horizontal) {
-    const scroller = document.scrollingElement || document.documentElement;
-    if (!scroller) return false;
-    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
-    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
-                      : scroller.scrollHeight > window.innerHeight + 1;
-  }
-
-  window.addEventListener('keydown', function(event) {
-    if (!SCROLL_KEYS.has(event.key)) return;
-    if (event.defaultPrevented) return;
-    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
-    // reserved for shortcuts, so none of them are scroll intent.
-    if (event.altKey || event.metaKey || event.ctrlKey) return;
-
-    const target = event.target;
-    if (isTextEntryTarget(target)) return;
-
-    // Anything that can still absorb the scroll gets to keep it.
-    const horizontal = HORIZONTAL_KEYS.has(event.key);
-    if (rootCanScroll(horizontal)) return;
-    if (hasScrollableAncestor(target, horizontal)) return;
-
-    event.preventDefault();
-  }, {capture: true, passive: false});
-})();</script><script data-bard-client-injected="true">(function() {
-  // Ensure this script is executed only once
-  if (window.firebaseAuthBridgeScriptLoaded) {
-    return;
-  }
-  window.firebaseAuthBridgeScriptLoaded = true;
-
-  let nextTokenPromiseId = 0;
-
-  // Stores { resolve, reject } for ongoing token requests
-  const pendingTokenPromises = {};
-
-  // Listen for messages from the Host Application
-  window.addEventListener('message', function(event) {
-
-    const messageData = event.data;
-
-  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
-      const { success, token, error, promiseId } = messageData ?? {};
-      if (pendingTokenPromises[promiseId]) {
-        if (success) {
-          pendingTokenPromises[promiseId].resolve(token);
-        } else {
-          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
-        }
-        delete pendingTokenPromises[promiseId];
-      }
-    }
-  });
-
-  // Expose a function for the Generated App to request a new Firebase token
-  window.requestNewFirebaseToken = function() {
-    const currentPromiseId = nextTokenPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingTokenPromises[currentPromiseId] = { resolve, reject };
-    });
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({
-        type: 'REQUEST_NEW_FIREBASE_TOKEN',
-        promiseId: currentPromiseId
-      }, '*');
-    } else {
-      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
-      delete pendingTokenPromises[currentPromiseId];
-    }
-    return promise;
-  };
-})();</script><script data-bard-client-injected="true">
-let realOriginalGetUserMedia = null;
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-}
-
-(function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
-    try {
-      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
-        get: function() {
-          return undefined; // Or throw an error
-        },
-        configurable: false
-      });
-    } catch (error) {
-      console.error("Error defining prototype getter:", error);
-    }
-  }
-})();
-
-(function() {
-  const pendingMediaResolvers = {};
-  let nextMediaPromiseId = 0;
-
-  function requestMediaPermissions(constraints) {
-    const mediaPromiseId = nextMediaPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingMediaResolvers[mediaPromiseId] = (granted) => {
-        delete pendingMediaResolvers[mediaPromiseId];
-        resolve(granted);
-      };
-    });
-
-    window.parent.postMessage({
-      type: 'requestMediaPermission',
-      constraints: constraints,
-      promiseId: mediaPromiseId,
-    }, '*');
-
-    return promise;
-  }
-
-  let originalGetUserMedia = realOriginalGetUserMedia;
-
-  function interceptGetUserMedia() {
-    if (navigator.mediaDevices) {
-      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
-        value: function(constraints) {
-          return requestMediaPermissions(constraints).then((granted) => {
-            if (granted) {
-              if (originalGetUserMedia) {
-                return originalGetUserMedia(constraints);
-              } else {
-                throw new Error("Original getUserMedia not available.");
-              }
-            } else {
-              throw new DOMException('Permission denied', 'NotAllowedError');
-            }
-          });
-        },
-        writable: false,
-        configurable: false
-      });
-    }
-  }
-
-  interceptGetUserMedia();
-
-  const observer = new MutationObserver(function(mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'childList' && mutation.addedNodes) {
-        mutation.addedNodes.forEach(node => {
-          if (node === navigator.mediaDevices) {
-            interceptGetUserMedia();
-          }
-        });
-      }
-    }
-  });
-
-  function interceptSpeechRecognition() {
-    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
-      return;
-    }
-
-    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const SpeechRecognitionWrapper = function(...args) {
-      const recognizer = new OriginalSpeechRecognition(...args);
-      const originalStart = recognizer.start.bind(recognizer);
-
-      recognizer.start = function() {
-        requestMediaPermissions({ audio: true }).then(granted => {
-          if (granted) {
-            originalStart();
-          } else {
-            const errorEvent = new SpeechRecognitionErrorEvent('error');
-            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
-            recognizer.dispatchEvent(errorEvent);
-          }
-        });
-      };
-
-      return recognizer;
-    };
-
-    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
-    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
-
-    if (window.SpeechRecognition) {
-      window.SpeechRecognition = SpeechRecognitionWrapper;
-    }
-    if (window.webkitSpeechRecognition) {
-      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
-    }
-  }
-
-  interceptSpeechRecognition();
-
-  window.addEventListener('message', function(event) {
-    if (event.data) {
-      if (event.data.type === 'resolveMediaPermission') {
-        const { promiseId, granted } = event.data;
-        if (pendingMediaResolvers[promiseId]) {
-          pendingMediaResolvers[promiseId](granted);
-        }
-      }
-    }
-  });
-
-})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
-function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
-
- Copyright The Closure Library Authors.
- SPDX-License-Identifier: Apache-2.0
-*/
-function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
-let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
-null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
-c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
-"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
-Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
-(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
-url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
-</script><script data-bard-client-injected="true">((function(modelInformation) {
-  const originalFetch = window.fetch;
-  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
-  let googleLlmBaseApiUrls = [
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
-  ];
-  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-    );
-  });
-  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-
-  const pendingFetchResolvers = {};
-  let nextPromiseId = 0;
-
-  function handleStringInput(input, optionsArgument) {
-    const actualUrl = input;
-    const fetchCallArgs = [actualUrl, optionsArgument];
-    const effectiveOptions = optionsArgument || {};
-    const bodyForApiKeyCheck = effectiveOptions.body;
-    const bodyForPostMessage = effectiveOptions.body;
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  function handleRequestInput(input, optionsArgument) {
-    const actualUrl = input.url;
-    const fetchCallArgs = [input, optionsArgument];
-    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (optionsArgument) {
-      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
-      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
-      if ('body' in optionsArgument) {
-        bodyForApiKeyCheck = optionsArgument.body;
-        bodyForPostMessage = optionsArgument.body;
-      } else {
-        bodyForApiKeyCheck = undefined;
-        bodyForPostMessage = input.body;
-      }
-    } else {
-      bodyForApiKeyCheck = undefined;
-      bodyForPostMessage = input.body;
-    }
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  window.fetch = function(input, optionsArgument) {
-    let actualUrl;
-    let fetchCallArgs;
-    let effectiveOptions = {};
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (typeof input === 'string') {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
-    } else if (input instanceof Request) {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
-    } else {
-      return originalFetch.apply(window, [input, optionsArgument]);
-    }
-
-    effectiveOptions.method = effectiveOptions.method || 'GET';
-    if (!effectiveOptions.headers) {
-      effectiveOptions.headers = new Headers();
-    }
-
-
-    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
-      let apiKeyIsNull = true;
-
-      const regex = new RegExp("models/([^:]+)");
-      const modelNameMatch = actualUrl.match(regex);
-      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
-
-
-      try {
-        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
-        const apiKeyParam = urlObject.searchParams.get('key');
-        if (apiKeyParam) {
-          apiKeyIsNull = false;
-        }
-      } catch (e) {
-        // Continue checks even if URL parsing fails
-      }
-
-      if (apiKeyIsNull && effectiveOptions.headers) {
-        const h = new Headers(effectiveOptions.headers);
-        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
-        if (apiKeyHeaderValue) {
-          apiKeyIsNull = false;
-          return originalFetch.apply(window, fetchCallArgs);
-        }
-      }
-
-      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
-        try {
-          const bodyData = JSON.parse(bodyForApiKeyCheck);
-          if (bodyData && bodyData.apiKey) {
-            apiKeyIsNull = false;
-            return originalFetch.apply(window, fetchCallArgs);
-          }
-        } catch (e) {
-          // Ignore JSON parsing errors
-        }
-      }
-
-      if(apiKeyIsNull) {
-        const promiseId = nextPromiseId++;
-        const promise = new Promise((resolve) => {
-          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
-            delete pendingFetchResolvers[promiseId];
-            resolve(resolvedResponse);
-          };
-        });
-
-        let serializedBodyForPostMessage;
-        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
-            serializedBodyForPostMessage = bodyForPostMessage;
-        } else if (bodyForPostMessage instanceof ReadableStream) {
-            serializedBodyForPostMessage = null;
-        } else {
-            try {
-                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
-            } catch (e) {
-                serializedBodyForPostMessage = null;
-            }
-        }
-
-        const messageOptions = {
-            method: effectiveOptions.method,
-            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
-            body: serializedBodyForPostMessage
-        };
-
-        window.parent.postMessage({
-          type: 'requestFetch',
-          url: actualUrl,
-          modelName: modelName,
-          options: messageOptions,
-          promiseId: promiseId,
-        }, '*');
-
-        return promise;
-      }
-      return originalFetch.apply(window, fetchCallArgs);
-    }
-    return originalFetch.apply(window, fetchCallArgs);
-  };
-
-  window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'resolveFetch') {
-      const { promiseId, response } = event.data;
-      if (pendingFetchResolvers[promiseId]) {
-        try {
-          const reconstructedResponse = new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: new Headers(response.headers),
-          });
-          pendingFetchResolvers[promiseId](reconstructedResponse);
-        } catch (error) {
-          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
-        }
-      }
-    }
-  });
-
-}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
-  function normalizeSlug(str) {
-    try {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^p{L}p{N}s_-]/gu, '')
-        .replace(/s+/g, '-');
-    } catch (e) {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9s_-]/g, '')
-        .replace(/s+/g, '-');
-    }
-  }
-
-  function findTargetElement(hash) {
-    if (!hash || hash === '#') {
-      return null;
-    }
-    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
-    let decodedId = rawId;
-    try {
-      decodedId = decodeURIComponent(rawId);
-    } catch (e) {
-      // Ignore URI malformed errors.
-    }
-
-    // 1. Direct ID match (raw and decoded).
-    let target = document.getElementById(rawId) || document.getElementById(decodedId);
-    if (target) {
-      return target;
-    }
-
-    // 2. Name attribute match (<a name="...">).
-    try {
-      if (typeof CSS !== 'undefined' && CSS.escape) {
-        target =
-          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
-          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
-      } else {
-        const namedElements = document.getElementsByName(rawId);
-        if (namedElements && namedElements.length > 0) {
-          return namedElements[0];
-        }
-      }
-    } catch (e) {
-      // Ignore querySelector syntax errors.
-    }
-    if (target) {
-      return target;
-    }
-
-    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
-    const targetSlug = normalizeSlug(decodedId);
-    if (targetSlug) {
-      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
-        if (normalizeSlug(heading.textContent || '') === targetSlug) {
-          return heading;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  document.addEventListener('click', function(event) {
-    const target = event.target;
-    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
-    if (!anchor) {
-      return;
-    }
-
-    const href = anchor.getAttribute('href');
-    if (
-      !href ||
-      href.trim().toLowerCase().startsWith('javascript:') ||
-      anchor.hasAttribute('download')
-    ) {
-      return;
-    }
-
-    // Check if the link is an in-page hash / anchor link.
-    if (href.startsWith('#')) {
-      event.preventDefault();
-      const targetElement = findTargetElement(href);
-      if (targetElement) {
-        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-      }
-      return;
-    }
-
-    // Check if the URL has the same origin/pathname but with a hash.
-    try {
-      const url = new URL(anchor.href, window.location.href);
-      if (
-        url.hash &&
-        url.origin === window.location.origin &&
-        url.pathname === window.location.pathname
-      ) {
-        event.preventDefault();
-        const targetElement = findTargetElement(url.hash);
-        if (targetElement) {
-          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
-        return;
-      }
-    } catch (e) {
-      // Fall through if URL parsing fails.
-    }
-
-    // For all external or full navigation links, prevent iframe-level navigation
-    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
-    // safely in a new tab/window.
-    if (anchor.target !== '_blank') {
-      event.preventDefault();
-      window.open(anchor.href, '_blank', 'noopener,noreferrer');
-    }
-  }, {capture: true});
-})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const originalConsoleLog = console.log;
-  const originalConsoleError = console.error;
-
-    /**
-   * Normalizes an error event or a promise rejection reason into a structured error object.
-   * @param {*} errorEventOrReason The error object or reason.
-   * @return {object} Structured error data { message, name, stack }.
-   */
-  function getErrorObject(errorEventOrReason) {
-    if (errorEventOrReason instanceof Error) {
-      return {
-        message: errorEventOrReason.message,
-        name: errorEventOrReason.name,
-        stack: errorEventOrReason.stack,
-      };
-    }
-    // Fallback for non-Error objects.
-    try {
-      return {
-        message: JSON.stringify(errorEventOrReason),
-        name: 'UnknownErrorType',
-        stack: null,
-      };
-    } catch (e) {
-      return {
-        message: String(errorEventOrReason),
-        name: 'UnknownErrorTypeNonStringifiable',
-        stack: null,
-      };
-    }
-  }
-
-  /**
-   * Converts an array of arguments (from log/error) into a single string.
-   * Handles Error objects specially to include their message and stack.
-   * @param {Array<*>} args - Arguments passed to console methods.
-   * @return {string} A string representation of the arguments.
-   */
-  function stringifyArgs(args) {
-    return args
-      .map((arg) => {
-        if (arg instanceof Error) {
-          const {message, stack} = arg;
-          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
-        }
-        if (typeof arg === 'object' && arg !== null) {
-          try {
-            return JSON.stringify(arg);
-          } catch (error) {
-            return '[Circular Object]';
-          }
-        } else {
-          return String(arg);
-        }
-      })
-      .join(' ');
-  }
-
-  console.log = function(...args) {
-    const logString = stringifyArgs(args);
-    window.parent.postMessage({ type: 'log', message: logString }, '*');
-    originalConsoleLog.apply(console, args);
-  };
-
-  console.error = function(...args) {
-    let errorData;
-    if (args.length > 0 && args[0] instanceof Error) {
-      const err = args[0];
-      // If the first arg is an Error, capture its details.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        ...getErrorObject(err),
-        rawArgsString: stringifyArgs(args.slice(1)),
-        timestamp: new Date().toISOString(),
-      };
-    } else {
-      // If not an Error object, treat all args as a general error message.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        message: stringifyArgs(args),
-        name: 'ConsoleLoggedError',
-        stack: null,
-        timestamp: new Date().toISOString(),
-      };
-    }
-    window.parent.postMessage(errorData, '*');
-    originalConsoleError.apply(console, args);
-  };
-
-  // Listen for global unhandled synchronous errors.
-  window.addEventListener('error', function(event) {
-    const errorDetails = event.error ? getErrorObject(event.error) : {
-      message: event.message,
-      name: 'GlobalError',
-      stack: null,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    };
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'global',
-      ...errorDetails,
-      message: errorDetails.message || event.message,
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-  // Listen for unhandled promise rejections (asynchronous errors).
-  window.addEventListener('unhandledrejection', function(event) {
-    const errorDetails = getErrorObject(event.reason);
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'unhandledrejection',
-      ...errorDetails,
-      message: errorDetails.message || 'Unhandled Promise Rejection',
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-})();</script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WildAnySplat: Feed-Forward 3D Gaussian Splatting in the Wild | SIGGRAPH Asia 2026</title>
-  <meta name="description" content="WildAnySplat: Feed-Forward 3D Gaussian Splatting in the Wild (SIGGRAPH Asia 2026). Reconstructing clean, artifact-free 3D Gaussian Splats in a single feed-forward pass from unconstrained in-the-wild captures.">
+  <meta name="description" content="WildAnySplat: Feed-Forward 3D Gaussian Splatting in the Wild (SIGGRAPH Asia 2026). Reconstructing clean, artifact-free 3D Gaussian Splats in a single feed-forward pass from unconstrained in-the-wild captures." />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts matching Nerfies / Ico3D / Off-the-Grid (Google Sans / Noto Sans / Castoro / JetBrains Mono) -->
+  <!-- Google Fonts matching Nerfies / Ico3D / Off-the-Grid -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&amp;family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome Icons (for Paper, arXiv, GitHub, Video, Sliders) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <script>
     tailwind.config = {
@@ -751,12 +29,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
           },
           colors: {
             nerfies: {
-              dark: '#363636',
-              darker: '#242424',
-              link: '#3273dc',
-              linkHover: '#1d5bbf',
+              dark: '#2c3e50',
+              darker: '#1a252f',
+              link: '#2980b9',
+              linkHover: '#1f618d',
               bgSoft: '#f8fafc',
-              accent: '#ea580c',
+              accent: '#d35400',
             }
           }
         }
@@ -767,25 +45,20 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
   <style>
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      color: #2b2b2b;
+      color: #2c3e50;
       background-color: #ffffff;
       overflow-x: hidden;
     }
-
     h1, h2, h3, .publication-title {
       font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     }
-
-    /* Classic Nerfies / Academic Title Gradient Accent */
     .wild-gradient {
-      background: linear-gradient(135deg, #ea580c 0%, #d97706 45%, #2563eb 100%);
+      background: linear-gradient(135deg, #e67e22 0%, #d35400 45%, #2980b9 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    /* Nerfies Pill Button Styling */
     .nerfies-btn {
-      background-color: #363636;
+      background-color: #2c3e50;
       color: #ffffff;
       border-radius: 9999px;
       padding: 0.55rem 1.2rem;
@@ -795,21 +68,14 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
       align-items: center;
       gap: 0.5rem;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
-
     .nerfies-btn:hover {
-      background-color: #1f2937;
+      background-color: #1a252f;
       transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
     }
-
-    .nerfies-btn:active {
-      transform: translateY(0);
-    }
-
-    /* Interactive Split-Screen Video Comparison Slider */
     .comparison-container {
       position: relative;
       user-select: none;
@@ -817,11 +83,10 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
       overflow: hidden;
       border-radius: 0.85rem;
       background: #0f172a;
-      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
       cursor: ew-resize;
       touch-action: pan-y;
     }
-
     .slider-divider {
       position: absolute;
       top: 0;
@@ -832,7 +97,6 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
       pointer-events: none;
       z-index: 20;
     }
-
     .slider-handle {
       position: absolute;
       top: 50%;
@@ -845,142 +109,102 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.25);
       pointer-events: none;
       z-index: 25;
       transition: transform 0.12s ease, background-color 0.12s ease;
     }
-
     .comparison-container:hover .slider-handle {
       transform: translate(-50%, -50%) scale(1.08);
       background: #ffffff;
     }
-
-    /* Editable Author Fields */
-    [contenteditable="true"] {
-      outline: 2px dashed #3b82f6;
-      outline-offset: 4px;
-      border-radius: 4px;
-      background-color: rgba(59, 130, 246, 0.04);
-      padding: 2px 4px;
-    }
-
-    /* Custom Scrollbar for Code/BibTeX */
-    pre::-webkit-scrollbar {
-      height: 8px;
-    }
-    pre::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 4px;
-    }
-    pre::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
+    pre::-webkit-scrollbar { height: 8px; }
+    pre::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+    pre::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:"Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:"JetBrains Mono", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.top-0{top:0px}.left-2{left:0.5rem}.left-3{left:0.75rem}.right-2{right:0.5rem}.right-3{right:0.75rem}.top-2{top:0.5rem}.top-3{top:0.75rem}.z-40{z-index:40}.z-30{z-index:30}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mt-12{margin-top:3rem}.mt-3\.5{margin-top:0.875rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-8{margin-bottom:2rem}.mr-1{margin-right:0.25rem}.mt-1{margin-top:0.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:0.5rem}.mt-2\.5{margin-top:0.625rem}.mt-3{margin-top:0.75rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.aspect-\[16\/9\]{aspect-ratio:16/9}.aspect-video{aspect-ratio:16 / 9}.aspect-\[16\/10\]{aspect-ratio:16/10}.aspect-\[4\/3\]{aspect-ratio:4/3}.h-2{height:0.5rem}.h-auto{height:auto}.h-full{height:100%}.h-6{height:1.5rem}.max-h-\[85vh\]{max-height:85vh}.max-h-\[88vh\]{max-height:88vh}.w-2{width:0.5rem}.w-full{width:100%}.w-6{width:1.5rem}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-6xl{max-width:72rem}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.list-inside{list-style-position:inside}.list-decimal{list-style-type:decimal}.list-disc{list-style-type:disc}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-x-6{column-gap:1.5rem}.gap-y-2{row-gap:0.5rem}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.scroll-smooth{scroll-behavior:smooth}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}.border-orange-200\/80{border-color:rgb(254 215 170 / 0.8)}.border-orange-500\/30{border-color:rgb(249 115 22 / 0.3)}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-amber-500\/30{border-color:rgb(245 158 11 / 0.3)}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-emerald-500\/40{border-color:rgb(16 185 129 / 0.4)}.border-rose-500\/40{border-color:rgb(244 63 94 / 0.4)}.border-slate-700\/80{border-color:rgb(51 65 85 / 0.8)}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-orange-50{--tw-bg-opacity:1;background-color:rgb(255 247 237 / var(--tw-bg-opacity, 1))}.bg-orange-500{--tw-bg-opacity:1;background-color:rgb(249 115 22 / var(--tw-bg-opacity, 1))}.bg-orange-500\/20{background-color:rgb(249 115 22 / 0.2)}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-50\/80{background-color:rgb(248 250 252 / 0.8)}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/95{background-color:rgb(15 23 42 / 0.95)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-700\/70{background-color:rgb(51 65 85 / 0.7)}.bg-slate-800\/60{background-color:rgb(30 41 59 / 0.6)}.bg-slate-800\/70{background-color:rgb(30 41 59 / 0.7)}.bg-slate-800\/90{background-color:rgb(30 41 59 / 0.9)}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950\/75{background-color:rgb(2 6 23 / 0.75)}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-slate-950\/90{background-color:rgb(2 6 23 / 0.9)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.object-contain{object-fit:contain}.object-cover{object-fit:cover}.p-4{padding:1rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.pb-6{padding-bottom:1.5rem}.pt-10{padding-top:2.5rem}.pt-8{padding-top:2rem}.pt-3{padding-top:0.75rem}.text-center{text-align:center}.text-justify{text-align:justify}.font-mono{font-family:"JetBrains Mono", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-\[11px\]{font-size:11px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-nerfies-link{--tw-text-opacity:1;color:rgb(50 115 220 / var(--tw-text-opacity, 1))}.text-orange-300{--tw-text-opacity:1;color:rgb(253 186 116 / var(--tw-text-opacity, 1))}.text-orange-800{--tw-text-opacity:1;color:rgb(154 52 18 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-amber-900{--tw-text-opacity:1;color:rgb(120 53 15 / var(--tw-text-opacity, 1))}.text-amber-950{--tw-text-opacity:1;color:rgb(69 26 3 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.text-slate-100{--tw-text-opacity:1;color:rgb(241 245 249 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.selection\:bg-blue-100 *::selection{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.selection\:text-blue-900 *::selection{--tw-text-opacity:1;color:rgb(30 58 138 / var(--tw-text-opacity, 1))}.selection\:bg-blue-100::selection{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.selection\:text-blue-900::selection{--tw-text-opacity:1;color:rgb(30 58 138 / var(--tw-text-opacity, 1))}.file\:mr-2::file-selector-button{margin-right:0.5rem}.file\:rounded::file-selector-button{border-radius:0.25rem}.file\:border-0::file-selector-button{border-width:0px}.file\:bg-emerald-500\/20::file-selector-button{background-color:rgb(16 185 129 / 0.2)}.file\:bg-rose-500\/20::file-selector-button{background-color:rgb(244 63 94 / 0.2)}.file\:px-2\.5::file-selector-button{padding-left:0.625rem;padding-right:0.625rem}.file\:py-1::file-selector-button{padding-top:0.25rem;padding-bottom:0.25rem}.file\:text-emerald-300::file-selector-button{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.file\:text-rose-300::file-selector-button{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.hover\:bg-amber-500\/30:hover{background-color:rgb(245 158 11 / 0.3)}.hover\:bg-blue-500:hover{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-300:hover{--tw-bg-opacity:1;background-color:rgb(203 213 225 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-600:hover{--tw-bg-opacity:1;background-color:rgb(71 85 105 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.hover\:file\:bg-emerald-500\/30::file-selector-button:hover{background-color:rgb(16 185 129 / 0.3)}.hover\:file\:bg-rose-500\/30::file-selector-button:hover{background-color:rgb(244 63 94 / 0.3)}@media (min-width: 640px){.sm\:inline{display:inline}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:gap-3{gap:0.75rem}.sm\:p-6{padding:1.5rem}.sm\:p-5{padding:1.25rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\:text-5xl{font-size:3rem;line-height:1}.sm\:text-base{font-size:1rem;line-height:1.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 768px){.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-end{align-items:flex-end}}@media (min-width: 1024px){.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:col-span-8{grid-column:span 8 / span 8}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style></head>
-<body class="antialiased selection:bg-blue-100 selection:text-blue-900">
+</head>
+<body class="antialiased selection:bg-orange-100 selection:text-orange-900">
 
   <!-- =====================================================================
-       0. FLOATING AUTHOR STUDIO BAR (Excluded when exporting index.html)
+       1. TOP HERO SECTION (Title, Authors, Affiliation & Buttons)
        ===================================================================== -->
-  
-
-  <!-- =====================================================================
-       1. HERO SECTION: TITLE, AUTHORS, AFFILIATION & RESOURCE LINKS
-       ===================================================================== -->
-  <header class="pt-10 pb-6 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+  <header class="pt-16 pb-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
     <!-- Conference Badge -->
-    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200/80 text-orange-800 text-xs sm:text-sm font-semibold mb-4 shadow-sm">
-      <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-      <span class="editable-field">SIGGRAPH Asia 2026 (Conference Papers ’26)</span>
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs sm:text-sm font-bold tracking-wide shadow-sm mb-6">
+      <i class="fa-solid fa-award text-orange-600"></i>
+      <span>SIGGRAPH Asia 2026 Conference Papers</span>
     </div>
 
     <!-- Paper Title -->
-    <h1 class="publication-title text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight mb-5 editable-field">
+    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
       <span class="wild-gradient">WildAnySplat</span>: Feed-Forward 3D Gaussian Splatting in the Wild
     </h1>
 
-    <!-- Authors List (Exact Authors from Paper) -->
-    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-base sm:text-lg font-medium text-nerfies-link mb-3">
-      <a href="https://ricshaw.github.io/" target="_blank" rel="noopener" class="hover:underline">Richard Shaw<sup>1</sup></a>
-      <a href="https://arthurmoreau.github.io/" target="_blank" rel="noopener" class="hover:underline">Arthur Moreau<sup>1</sup></a>
-      <a href="#bibtex" class="hover:underline">Athanasios Papaioannou<sup>1</sup></a>
-      <a href="#bibtex" class="hover:underline">Thomas Tanay<sup>1</sup></a>
-      <a href="https://zhangzhensong.github.io/" target="_blank" rel="noopener" class="hover:underline">Zhensong Zhang<sup>1</sup></a>
-      <a href="https://perezpellitero.github.io/" target="_blank" rel="noopener" class="hover:underline">Eduardo Pérez-Pellitero<sup>1</sup></a>
+    <!-- Authors List with Exact Hyperlinks -->
+    <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-base sm:text-lg font-medium text-slate-800 mb-3">
+      <a href="https://scholar.google.com/citations?user=9qqtzK4AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Richard Shaw</a><sup>1</sup>,
+      <a href="https://scholar.google.com/citations?user=fMmoHX0AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Arthur Moreau</a><sup>1</sup>,
+      <a href="https://apapaion.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Athanasios Papaioannou</a><sup>1</sup>,
+      <a href="https://thomas-tanay.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Thomas Tanay</a><sup>1</sup>,
+      <a href="https://zhangzhensong.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Zhang Zhensong</a><sup>1</sup>, and
+      <a href="https://perezpellitero.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Eduardo Pérez-Pellitero</a><sup>1</sup>
     </div>
 
     <!-- Affiliation -->
-    <p class="text-sm sm:text-base text-slate-600 font-medium mb-6 editable-field">
-      <sup>1</sup>Huawei Noah’s Ark Lab, London, United Kingdom
+    <p class="text-sm sm:text-base text-slate-600 font-medium mb-8">
+      <sup>1</sup>Huawei Noah’s Ark Lab, London, UK
     </p>
 
-    <!-- Nerfies-Style Pill Action Buttons -->
-    <div class="flex flex-wrap justify-center gap-2.5 sm:gap-3">
-      <a id="link-pdf" href="./wildanysplat.pdf" target="_blank" rel="noopener" class="nerfies-btn">
+    <!-- Dark Pill Action Buttons (Paper, arXiv, Code, Weights, BibTeX) -->
+    <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+      <a id="link-pdf" href="./wildanysplat.pdf" target="_blank" class="nerfies-btn">
         <i class="fa-solid fa-file-pdf text-red-400"></i>
-        <span>Paper</span>
+        <span>Paper (PDF)</span>
       </a>
-      <a id="link-supp" href="./wildanysplat_supp.pdf" target="_blank" rel="noopener" class="nerfies-btn">
-        <i class="fa-solid fa-file-lines text-amber-300"></i>
+      <a id="link-supp" href="./wildanysplat_supp.pdf" target="_blank" class="nerfies-btn">
+        <i class="fa-solid fa-folder-open text-amber-400"></i>
         <span>Supplementary</span>
       </a>
-      <a id="link-arxiv" href="https://arxiv.org/abs/2608.02148" target="_blank" rel="noopener" class="nerfies-btn">
-        <i class="fa-solid fa-book-open text-orange-300"></i>
+      <a id="link-arxiv" href="https://arxiv.org/abs/2603.wildanysplat" target="_blank" class="nerfies-btn">
+        <i class="fa-solid fa-graduation-cap text-blue-400"></i>
         <span>arXiv</span>
       </a>
-      <a href="#teaser" class="nerfies-btn">
-        <i class="fa-brands fa-youtube text-rose-400"></i>
-        <span>Video</span>
+      <a id="link-github" href="https://github.com/ricshaw/WildAnySplat" target="_blank" class="nerfies-btn">
+        <i class="fa-brands fa-github text-white"></i>
+        <span>Code (GitHub)</span>
       </a>
-      <a id="link-github" href="https://github.com/ricshaw/WildAnySplat" target="_blank" rel="noopener" class="nerfies-btn">
-        <i class="fa-brands fa-github text-slate-200"></i>
-        <span>Code</span>
+      <a id="link-hf" href="https://huggingface.co/ricshaw/WildAnySplat" target="_blank" class="nerfies-btn">
+        <i class="fa-solid fa-box-archive text-yellow-400"></i>
+        <span>Weights (🤗 HF)</span>
       </a>
-      <a id="link-hf" href="https://huggingface.co/ricshaw/WildAnySplat" target="_blank" rel="noopener" class="nerfies-btn">
-        <span>🤗</span>
-        <span>Weights</span>
+      <a href="#bibtex" class="nerfies-btn">
+        <i class="fa-solid fa-quote-left text-emerald-400"></i>
+        <span>BibTeX</span>
       </a>
-      <a href="#comparisons" class="nerfies-btn">
-        <i class="fa-solid fa-arrows-left-right text-emerald-400"></i>
-        <span>Results vs. AnySplat</span>
-      </a>
+      <button onclick="openHostingModal()" class="nerfies-btn bg-sky-700 hover:bg-sky-800">
+        <i class="fa-solid fa-rocket text-cyan-200"></i>
+        <span>Hosting Guide</span>
+      </button>
     </div>
   </header>
 
   <!-- =====================================================================
-       2. TEASER VIDEO SECTION (WildAnySplat_FastForward.mov + Fig. 1 Showcase)
+       2. TEASER VIDEO SECTION (WildAnySplat_FastForward.mov - Clean, no header)
        ===================================================================== -->
   <section id="teaser" class="py-4 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
     <div class="rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 shadow-xl">
-      <!-- Top Teaser Status Bar -->
-      <div class="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
-        <div class="flex items-center gap-2">
-          <span id="teaser-status-indicator" class="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span class="font-semibold text-white">Teaser Fast-Forward Video (<code class="font-mono text-amber-300">WildAnySplat_FastForward.mov</code>)</span>
-        </div>
-        <div class="text-slate-400 text-xs">
-          SIGGRAPH Asia 2026 Preview
-        </div>
-      </div>
-
-      <!-- HTML5 Video Element loading WildAnySplat_FastForward.mov directly -->
-      <video id="teaser-video" class="w-full aspect-video bg-black object-contain" controls="" autoplay="" loop="" muted="" playsinline="">
-        <source src="./WildAnySplat_FastForward.mov" type="video/mp4">
-        <source src="./static/videos/WildAnySplat_FastForward.mov" type="video/mp4">
+      <!-- Plain widescreen video element loading WildAnySplat_FastForward.mov directly -->
+      <video id="teaser-video" class="w-full aspect-video bg-black object-contain block" controls autoplay loop muted playsinline>
+        <source src="./WildAnySplat_FastForward.mov" type="video/quicktime" />
+        <source src="./WildAnySplat_FastForward.mp4" type="video/mp4" />
+        <source src="./static/videos/WildAnySplat_FastForward.mov" type="video/quicktime" />
         Your browser does not support HTML5 video.
       </video>
-
-      <!-- Fallback Live Canvas Preview (Hidden unless video fails) -->
-      <div id="teaser-canvas-wrapper" class="hidden relative w-full aspect-[16/9] bg-slate-950">
-        <canvas id="teaser-canvas" class="w-full h-full block"></canvas>
-      </div>
     </div>
 
     <!-- Teaser Caption (From Paper Figure 1) -->
-    <p class="mt-3.5 text-center text-sm sm:text-base text-slate-600 max-w-4xl mx-auto leading-relaxed editable-field">
-      <strong>WildAnySplat</strong> reconstructs transient-free and appearance-consistent 3D Gaussian scenes in a single feed-forward pass (<strong>&lt; 3 seconds</strong>) from casual in-the-wild captures containing dynamic occluders (e.g., performers in red and purple onesies in the <em>Limon</em> scene) and cross-view illumination/ISP variations, eliminating the severe ghosting artifacts of <strong>AnySplat</strong>.
+    <p class="mt-3.5 text-center text-sm sm:text-base text-slate-600 max-w-4xl mx-auto leading-relaxed">
+      WildAnySplat is a feed-forward 3DGS framework for robust NVS from in-the-wild images with transient occluders, illumination changes, and camera-dependent appearance variation. We predict transient-aware Gaussians and per-view appearance transforms, enabling canonical scene representations with reduced ghosting and improved multi-view consistency.
     </p>
   </section>
 
@@ -989,7 +213,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
        ===================================================================== -->
   <section id="abstract" class="py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
     <h2 class="text-2xl sm:text-3xl font-bold text-center text-slate-900 mb-5 tracking-tight">Abstract</h2>
-    <div class="space-y-4 text-slate-700 text-sm sm:text-base leading-relaxed text-justify editable-field">
+    <div class="space-y-4 text-slate-700 text-sm sm:text-base leading-relaxed text-justify">
       <p>
         We present <strong>WildAnySplat</strong>, a feed-forward 3D Gaussian Splatting framework that enables robust novel-view synthesis from in-the-wild multi-view images. Unlike controlled captures, real-world images often contain multi-view inconsistencies caused by transient occluders, illumination changes, and camera ISP, which degrade the quality of existing feed-forward reconstruction methods.
       </p>
@@ -1011,114 +235,90 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition">
           <i class="fa-regular fa-image"></i>
           <span>Replace with Custom <code class="font-mono">method.png</code></span>
-          <input type="file" accept="image/*" onchange="loadCustomMethodFigure(event)" class="hidden">
+          <input type="file" accept="image/*" onchange="loadCustomMethodFigure(event)" class="hidden" />
         </label>
       </div>
 
       <!-- Optional uploaded method image -->
-      <img id="custom-method-img" alt="WildAnySplat Method Overview Figure" class="hidden w-full rounded-xl border border-slate-200 shadow-md mb-4">
+      <img id="custom-method-img" alt="WildAnySplat Method Overview Figure" class="hidden w-full rounded-xl border border-slate-200 shadow-md mb-4" />
 
-      <!-- Crisp Vector Architecture Diagram of Figure 2 (Student-Teacher VGGT + 4 DPT Heads + Voxel Fusion + Bilateral Grid) -->
+      <!-- Crisp Vector Architecture Diagram of Figure 2 -->
       <div id="default-method-svg" class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 sm:p-6 shadow-sm">
         <svg viewBox="0 0 980 430" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"></path>
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
             </marker>
             <marker id="arrow-orange" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"></path>
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c" />
             </marker>
           </defs>
 
-          <!-- TOP STREAM: FROZEN CLEAN TEACHER (Training Only) -->
-          <rect x="18" y="18" width="944" height="122" rx="14" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5" stroke-dasharray="6,4"></rect>
+          <!-- TOP STREAM: FROZEN CLEAN TEACHER -->
+          <rect x="18" y="18" width="944" height="122" rx="14" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5" stroke-dasharray="6,4" />
           <text x="34" y="42" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="700" fill="#1e40af">
             TRAINING ONLY: Frozen Clean Teacher Network f_θt (Pretrained VGGT Backbone)
           </text>
-
-          <!-- Clean / Pseudo-Clean Inputs -->
-          <rect x="34" y="56" width="175" height="68" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"></rect>
+          <rect x="34" y="56" width="175" height="68" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5" />
           <text x="121" y="80" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Clean Views {I_i^c}</text>
           <text x="121" y="97" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#475569">Real Pairs + Synthetic Base</text>
           <text x="121" y="112" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#475569">+ WildGaussians Pseudo-Clean</text>
 
-          <line x1="209" y1="90" x2="255" y2="90" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="209" y1="90" x2="255" y2="90" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
 
-          <!-- Teacher VGGT -->
-          <rect x="258" y="56" width="195" height="68" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"></rect>
+          <rect x="258" y="56" width="195" height="68" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5" />
           <text x="355" y="83" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12.5" font-weight="700" fill="#1e3a8a">Frozen VGGT Teacher ❄️</text>
           <text x="355" y="102" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1e40af">Clean Multi-View Attention</text>
 
-          <line x1="453" y1="90" x2="500" y2="90" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="453" y1="90" x2="500" y2="90" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
 
-          <!-- Teacher Pose & Depth DPT Heads -->
-          <rect x="503" y="56" width="215" height="68" rx="8" fill="#ffffff" stroke="#60a5fa" stroke-width="1.5"></rect>
+          <rect x="503" y="56" width="215" height="68" rx="8" fill="#ffffff" stroke="#60a5fa" stroke-width="1.5" />
           <text x="610" y="82" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Teacher Pose C^t &amp; Depth D^t</text>
           <text x="610" y="102" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#2563eb">L_distill = L_C + L_D</text>
 
-          <!-- Distillation Arrow Down to Student -->
-          <line x1="610" y1="124" x2="520" y2="188" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="4,3" marker-end="url(#arrow-orange)"></line>
+          <line x1="610" y1="124" x2="520" y2="188" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="4,3" marker-end="url(#arrow-orange)" />
           <text x="655" y="160" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#ea580c">Geometric Distillation</text>
 
-          <!-- BOTTOM STREAM: TRAINABLE IN-THE-WILD STUDENT (Inference < 3 sec) -->
-          <rect x="18" y="165" width="944" height="248" rx="14" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"></rect>
+          <!-- BOTTOM STREAM: TRAINABLE IN-THE-WILD STUDENT -->
+          <rect x="18" y="165" width="944" height="248" rx="14" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5" />
           <text x="34" y="190" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="700" fill="#9a3412">
             INFERENCE &amp; TRAINING: In-the-Wild Student Network f_θs (Single Feed-Forward Pass &lt; 3 sec)
           </text>
-
-          <!-- In-the-Wild Inputs -->
-          <rect x="34" y="210" width="160" height="88" rx="8" fill="#ffffff" stroke="#fb923c" stroke-width="1.5"></rect>
+          <rect x="34" y="210" width="160" height="88" rx="8" fill="#ffffff" stroke="#fb923c" stroke-width="1.5" />
           <text x="114" y="236" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#0f172a">In-the-Wild {I_i^w}</text>
           <text x="114" y="255" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#dc2626">• Transient Occluders</text>
           <text x="114" y="272" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#d97706">• Illumination &amp; ISP</text>
-          <text x="114" y="288" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#64748b">(COCO + ISP Augment)</text>
 
-          <line x1="194" y1="254" x2="232" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="194" y1="254" x2="232" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
 
-          <!-- Student VGGT Backbone -->
-          <rect x="235" y="210" width="155" height="88" rx="8" fill="#ffedd5" stroke="#ea580c" stroke-width="1.8"></rect>
+          <rect x="235" y="210" width="155" height="88" rx="8" fill="#ffedd5" stroke="#ea580c" stroke-width="1.8" />
           <text x="312" y="246" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12.5" font-weight="700" fill="#7c2d12">Student VGGT</text>
           <text x="312" y="264" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#9a3412">Cross-View Fusion</text>
-          <text x="312" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#c2410c">448×448 px</text>
 
-          <line x1="390" y1="254" x2="428" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="390" y1="254" x2="428" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
 
-          <!-- 4 Dedicated DPT Heads -->
-          <rect x="432" y="198" width="225" height="195" rx="10" fill="#ffffff" stroke="#fdba74" stroke-width="1.5"></rect>
+          <rect x="432" y="198" width="225" height="195" rx="10" fill="#ffffff" stroke="#fdba74" stroke-width="1.5" />
           <text x="544" y="218" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="11.5" font-weight="700" fill="#0f172a">4 Dedicated Student DPT Heads</text>
-
-          <rect x="446" y="226" width="196" height="32" rx="6" fill="#f8fafc" stroke="#cbd5e1"></rect>
+          <rect x="446" y="226" width="196" height="32" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
           <text x="544" y="246" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#334155">1. Camera C^s &amp; 2. Depth D^s</text>
-
-          <rect x="446" y="266" width="196" height="38" rx="6" fill="#ecfdf5" stroke="#6ee7b7"></rect>
+          <rect x="446" y="266" width="196" height="38" rx="6" fill="#ecfdf5" stroke="#6ee7b7" />
           <text x="544" y="283" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#065f46">3. Gaussians G^s + Static Mask M_i</text>
-          <text x="544" y="297" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#047857">BCE(M_i, Y_i; β) Supervision</text>
-
-          <rect x="446" y="312" width="196" height="38" rx="6" fill="#f5f3ff" stroke="#c4b5fd"></rect>
+          <rect x="446" y="312" width="196" height="38" rx="6" fill="#f5f3ff" stroke="#c4b5fd" />
           <text x="544" y="329" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#5b21b6">4. Bilateral Grid Head B_i</text>
-          <text x="544" y="343" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#6d28d9">16×16×8 Residual Affine Grid</text>
 
-          <line x1="657" y1="285" x2="698" y2="255" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"></line>
-          <line x1="657" y1="331" x2="698" y2="345" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="657" y1="285" x2="698" y2="255" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
+          <line x1="657" y1="331" x2="698" y2="345" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
 
-          <!-- Mask-Weighted Voxel Fusion -->
-          <rect x="702" y="202" width="242" height="92" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.8"></rect>
+          <rect x="702" y="202" width="242" height="92" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.8" />
           <text x="823" y="225" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#065f46">Transient-Aware Voxel Fusion</text>
-          <text x="823" y="246" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#047857">w_{i,p} ∝ exp(conf/τ)·M_i(p)·R_i(p)</text>
-          <text x="823" y="266" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#065f46">Suppresses ghost Gaussians &amp; renders</text>
-          <text x="823" y="282" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" font-weight="700" fill="#065f46">Canonical Scene I_i^{canon}</text>
+          <text x="823" y="246" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#047857">w_{i,p} ∝ exp(conf/τ)·M_i(p)</text>
+          <text x="823" y="266" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#065f46">Suppresses ghost Gaussians</text>
 
-          <!-- Bilateral Grid Appearance Transform -->
-          <rect x="702" y="308" width="242" height="84" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"></rect>
+          <rect x="702" y="308" width="242" height="84" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5" />
           <text x="823" y="332" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#4c1d95">Per-View Appearance Transform</text>
-          <text x="823" y="352" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#5b21b6">I_i^s = B_i(I_i^{canon}), A_i = I + ΔA_i</text>
-          <text x="823" y="372" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6d28d9">L_photo^w = Σ M_i(p) ||I_i^s - I_i^w||_1</text>
+          <text x="823" y="352" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#5b21b6">I_i^s = B_i(I_i^{canon})</text>
         </svg>
       </div>
-
-      <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed editable-field">
-        <strong>Figure 2: WildAnySplat Architecture.</strong> During training, a frozen VGGT teacher network <span class="font-mono">f_θt</span> processes clean or WildGaussians pseudo-clean views <span class="font-mono">{I_i^c}</span> to supervise the student’s camera pose <span class="font-mono">C^s</span> and depth <span class="font-mono">D^s</span> via <span class="font-mono">L_distill</span>. The student predicts per-pixel static probabilities <span class="font-mono">M_i(p)</span> to downweight transient occluders during voxel fusion (<span class="font-mono">w_{i,p}</span>) and photometric supervision (<span class="font-mono">L_photo^w</span>), alongside <span class="font-mono">16×16×8</span> bilateral grids <span class="font-mono">B_i</span> that decouple per-image ISP/illumination shifts from the canonical 3D Gaussian representation.
-      </p>
     </div>
   </section>
 
@@ -1126,8 +326,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
        4. INTERACTIVE VIDEO COMPARISON SLIDERS (AnySplat vs. WildAnySplat)
        ===================================================================== -->
   <section id="comparisons" class="py-12 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
-    <div class="max-w-6xl mx-auto">
-      <!-- Section Header & Global Playback Controls -->
+    <div class="max-w-5xl mx-auto">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
           <span class="inline-block px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-2">
@@ -1136,12 +335,8 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
           <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
             Slide to Compare: <span class="text-rose-400">AnySplat</span> vs. <span class="text-emerald-400">WildAnySplat (Ours)</span>
           </h2>
-          <p class="text-slate-300 text-sm sm:text-base mt-1">
-            Drag the vertical slider across any video below to inspect transient ghost removal and appearance consistency.
-          </p>
         </div>
 
-        <!-- Synchronized Playback Bar -->
         <div class="flex flex-wrap items-center gap-2 bg-slate-800/90 p-2 rounded-xl border border-slate-700">
           <button onclick="toggleGlobalPause()" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition inline-flex items-center gap-1.5">
             <i id="global-play-icon" class="fa-solid fa-pause"></i>
@@ -1159,267 +354,110 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         </div>
       </div>
 
-      <!-- FEATURED COMPARISON SLIDER 0: RealX3D "Limon" (limon_rgb_asp.mp4 vs limon_rgb_wasp.mp4) -->
+      <!-- FEATURED COMPARISON SLIDER: RealX3D — Limon -->
       <div class="rounded-2xl bg-slate-800/70 border border-slate-700 p-4 sm:p-6 mb-8 shadow-2xl">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">Featured Scene</span>
-              <h3 class="text-lg sm:text-xl font-bold text-white">RealX3D — <em>Limon</em> Living Room (<code class="font-mono text-xs text-rose-300">limon_rgb_asp.mp4</code> vs. <code class="font-mono text-xs text-emerald-300">limon_rgb_wasp.mp4</code>)</h3>
-            </div>
-            <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              Performers wearing red and purple onesies walk across the room across casual views. <strong>AnySplat</strong> bakes red/purple ghost floaters over the green armchair and stone fireplace, whereas <strong>WildAnySplat</strong> recovers the clean static room.
-            </p>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition shadow">
-              <i class="fa-solid fa-upload"></i>
-              <span>Upload <code class="font-mono">limon_rgb_asp</code> + <code class="font-mono">wasp.mp4</code></span>
-              <input type="file" accept="video/*" multiple="" onchange="loadLimonVideoPair(event)" class="hidden">
-            </label>
-            <button onclick="toggleVideoUploadPanel(0)" class="px-2.5 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium transition">
-              <i class="fa-solid fa-sliders"></i> Pair Options
-            </button>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">Featured Scene</span>
+            <h3 class="text-lg sm:text-xl font-bold text-white">RealX3D — Limon</h3>
           </div>
         </div>
 
-        <!-- Optional Individual Left/Right Video File Picker Drawer for Slot 0 -->
-        <div id="upload-panel-0" class="hidden mb-4 p-3 rounded-xl bg-slate-900/90 border border-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div>
-            <label class="block text-rose-300 font-semibold mb-1">Left Video: AnySplat (<code class="font-mono">limon_rgb_asp.mp4</code>)</label>
-            <input type="file" accept="video/*" onchange="loadComparisonVideo(0, 'left', event)" class="w-full text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:bg-rose-500/20 file:text-rose-300 hover:file:bg-rose-500/30">
-          </div>
-          <div>
-            <label class="block text-emerald-300 font-semibold mb-1">Right Video: WildAnySplat (<code class="font-mono">limon_rgb_wasp.mp4</code>)</label>
-            <input type="file" accept="video/*" onchange="loadComparisonVideo(0, 'right', event)" class="w-full text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:bg-emerald-500/20 file:text-emerald-300 hover:file:bg-emerald-500/30">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-          <!-- Main Interactive Split-Screen Slider (8 cols on desktop) -->
-          <div class="lg:col-span-8">
-            <div class="comparison-container aspect-[16/10] w-full" data-slider-index="0">
-              <!-- Synchronized HTML5 Videos (Default for Slot 0) -->
-              <div id="comp-video-wrap-0" class="absolute inset-0 w-full h-full">
-                <video id="comp-vid-right-0" class="absolute inset-0 w-full h-full object-cover" autoplay="" loop="" muted="" playsinline="" crossorigin="anonymous">
-                  <source src="./limon_rgb_wasp.mp4" type="video/mp4">
-                  <source src="./static/videos/limon_rgb_wasp.mp4" type="video/mp4">
-                </video>
-                <video id="comp-vid-left-0" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay="" loop="" muted="" playsinline="" crossorigin="anonymous">
-                  <source src="./limon_rgb_asp.mp4" type="video/mp4">
-                  <source src="./static/videos/limon_rgb_asp.mp4" type="video/mp4">
-                </video>
-              </div>
-
-              <!-- Fallback Live 60FPS Canvas Renderer (Activated if video fails to load) -->
-              <canvas id="comp-canvas-0" class="hidden w-full h-full block"></canvas>
-
-              <!-- Top-Left & Top-Right Method Badges -->
-              <div class="absolute top-3 left-3 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-sm border border-rose-500/40 text-rose-300 text-xs font-bold shadow">
-                AnySplat (limon_rgb_asp.mp4)
-              </div>
-              <div class="absolute top-3 right-3 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-sm border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow">
-                WildAnySplat (Ours — limon_rgb_wasp.mp4)
-              </div>
-
-              <!-- Vertical Divider & Handle -->
-              <div id="divider-0" class="slider-divider" style="left: 50%;"></div>
-              <div id="handle-0" class="slider-handle" style="left: 50%;">
-                <i class="fa-solid fa-arrows-left-right text-sm"></i>
-              </div>
+        <div class="w-full">
+          <div class="comparison-container aspect-[16/10] w-full" data-slider-index="0">
+            <div id="comp-video-wrap-0" class="absolute inset-0 w-full h-full">
+              <video id="comp-vid-right-0" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline crossorigin="anonymous">
+                <source src="./limon_rgb_wasp.mp4" type="video/mp4" />
+                <source src="./static/videos/limon_rgb_wasp.mp4" type="video/mp4" />
+              </video>
+              <video id="comp-vid-left-0" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay loop muted playsinline crossorigin="anonymous">
+                <source src="./limon_rgb_asp.mp4" type="video/mp4" />
+                <source src="./static/videos/limon_rgb_asp.mp4" type="video/mp4" />
+              </video>
             </div>
-          </div>
-
-          <!-- Right Column (4 cols): Casual Input Views + Predicted Transient Masks Preview -->
-          <div class="lg:col-span-4 flex flex-col justify-between rounded-xl bg-slate-950/90 border border-slate-800 p-3.5">
-            <div>
-              <div class="flex items-center justify-between text-xs font-bold text-slate-300 mb-2">
-                <span>Transient Mask Prediction</span>
-                <span class="text-emerald-400 font-mono">T_i(p) = 1 - M_i(p)</span>
-              </div>
-              <div class="w-full aspect-[4/3] rounded-lg overflow-hidden border border-slate-800 bg-slate-900">
-                <canvas id="limon-inputs-canvas" class="w-full h-full block"></canvas>
-              </div>
+            <div class="absolute top-3 left-3 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-sm border border-rose-500/40 text-rose-300 text-xs font-bold shadow">
+              AnySplat
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-800/80 text-xs text-slate-300 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-slate-400">Dataset Benchmark:</span>
-                <span class="font-semibold text-white">RealX3D (9 Input Views)</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-slate-400">AnySplat PSNR / LPIPS:</span>
-                <span class="font-mono text-rose-300">16.40 dB / 0.396</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-slate-400">WildAnySplat (Ours):</span>
-                <span class="font-mono font-bold text-emerald-400">19.83 dB (+3.43 dB) / 0.270</span>
-              </div>
+            <div class="absolute top-3 right-3 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur-sm border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow">
+              WildAnySplat (Ours)
+            </div>
+            <div id="divider-0" class="slider-divider" style="left: 50%;"></div>
+            <div id="handle-0" class="slider-handle" style="left: 50%;">
+              <i class="fa-solid fa-arrows-left-right text-sm"></i>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- SECONDARY BENCHMARK SLIDERS (3-Column Grid) -->
+      <!-- SECONDARY BENCHMARK SLIDERS -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Slider 1: RealX3D MilkCookie -->
+        <!-- RealX3D MilkCookie -->
         <div class="rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <h4 class="font-bold text-sm sm:text-base text-white">RealX3D — <em>MilkCookie</em></h4>
-              <button onclick="toggleVideoUploadPanel(1)" class="text-[11px] text-slate-400 hover:text-white">
-                <i class="fa-solid fa-upload mr-1"></i>Load MP4
-              </button>
-            </div>
-            <div id="upload-panel-1" class="hidden mb-2 p-2 rounded bg-slate-900 border border-slate-700 space-y-1.5 text-[11px]">
-              <input type="file" accept="video/*" onchange="loadComparisonVideo(1, 'left', event)" class="w-full text-slate-300">
-              <input type="file" accept="video/*" onchange="loadComparisonVideo(1, 'right', event)" class="w-full text-slate-300">
-            </div>
+            <h4 class="font-bold text-sm sm:text-base text-white mb-2">RealX3D — MilkCookie</h4>
             <div class="comparison-container aspect-[16/10] w-full" data-slider-index="1">
-              <div id="comp-video-wrap-1" class="hidden absolute inset-0 w-full h-full">
-                <video id="comp-vid-right-1" class="absolute inset-0 w-full h-full object-cover" autoplay="" loop="" muted="" playsinline=""></video>
-                <video id="comp-vid-left-1" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay="" loop="" muted="" playsinline=""></video>
+              <div id="comp-video-wrap-1" class="absolute inset-0 w-full h-full">
+                <video id="comp-vid-right-1" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline></video>
+                <video id="comp-vid-left-1" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay loop muted playsinline></video>
               </div>
-              <canvas id="comp-canvas-1" class="w-full h-full block"></canvas>
               <div class="absolute top-2 left-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-rose-300 text-[11px] font-bold">AnySplat</div>
               <div class="absolute top-2 right-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-emerald-300 text-[11px] font-bold">WildAnySplat</div>
               <div id="divider-1" class="slider-divider" style="left: 50%;"></div>
               <div id="handle-1" class="slider-handle" style="left: 50%;"><i class="fa-solid fa-arrows-left-right text-xs"></i></div>
             </div>
           </div>
-          <p class="mt-2.5 text-xs text-slate-300 leading-relaxed">
-            Suppresses moving person with reflector and red bag occluders while harmonizing harsh backlit studio window glare.
-          </p>
         </div>
 
-        <!-- Slider 2: RealX3D GearWorks -->
+        <!-- RealX3D GearWorks -->
         <div class="rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <h4 class="font-bold text-sm sm:text-base text-white">RealX3D — <em>GearWorks</em></h4>
-              <button onclick="toggleVideoUploadPanel(2)" class="text-[11px] text-slate-400 hover:text-white">
-                <i class="fa-solid fa-upload mr-1"></i>Load MP4
-              </button>
-            </div>
-            <div id="upload-panel-2" class="hidden mb-2 p-2 rounded bg-slate-900 border border-slate-700 space-y-1.5 text-[11px]">
-              <input type="file" accept="video/*" onchange="loadComparisonVideo(2, 'left', event)" class="w-full text-slate-300">
-              <input type="file" accept="video/*" onchange="loadComparisonVideo(2, 'right', event)" class="w-full text-slate-300">
-            </div>
+            <h4 class="font-bold text-sm sm:text-base text-white mb-2">RealX3D — GearWorks</h4>
             <div class="comparison-container aspect-[16/10] w-full" data-slider-index="2">
-              <div id="comp-video-wrap-2" class="hidden absolute inset-0 w-full h-full">
-                <video id="comp-vid-right-2" class="absolute inset-0 w-full h-full object-cover" autoplay="" loop="" muted="" playsinline=""></video>
-                <video id="comp-vid-left-2" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay="" loop="" muted="" playsinline=""></video>
+              <div id="comp-video-wrap-2" class="absolute inset-0 w-full h-full">
+                <video id="comp-vid-right-2" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline></video>
+                <video id="comp-vid-left-2" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay loop muted playsinline></video>
               </div>
-              <canvas id="comp-canvas-2" class="w-full h-full block"></canvas>
               <div class="absolute top-2 left-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-rose-300 text-[11px] font-bold">AnySplat</div>
               <div class="absolute top-2 right-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-emerald-300 text-[11px] font-bold">WildAnySplat</div>
               <div id="divider-2" class="slider-divider" style="left: 50%;"></div>
               <div id="handle-2" class="slider-handle" style="left: 50%;"><i class="fa-solid fa-arrows-left-right text-xs"></i></div>
             </div>
           </div>
-          <p class="mt-2.5 text-xs text-slate-300 leading-relaxed">
-            Removes floating purple balloon streaks while preserving persistent objects in dynamic categories (such as the wall-mounted bicycle).
-          </p>
         </div>
 
-        <!-- Slider 3: Phototourism Brandenburg Gate -->
+        <!-- Phototourism Brandenburg Gate -->
         <div class="rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <h4 class="font-bold text-sm sm:text-base text-white">Phototourism — <em>Brandenburg Gate</em></h4>
-              <button onclick="toggleVideoUploadPanel(3)" class="text-[11px] text-slate-400 hover:text-white">
-                <i class="fa-solid fa-upload mr-1"></i>Load MP4
-              </button>
-            </div>
-            <div id="upload-panel-3" class="hidden mb-2 p-2 rounded bg-slate-900 border border-slate-700 space-y-1.5 text-[11px]">
-              <input type="file" accept="video/*" onchange="loadComparisonVideo(3, 'left', event)" class="w-full text-slate-300">
-              <input type="file" accept="video/*" onchange="loadComparisonVideo(3, 'right', event)" class="w-full text-slate-300">
-            </div>
+            <h4 class="font-bold text-sm sm:text-base text-white mb-2">Phototourism — Brandenburg Gate</h4>
             <div class="comparison-container aspect-[16/10] w-full" data-slider-index="3">
-              <div id="comp-video-wrap-3" class="hidden absolute inset-0 w-full h-full">
-                <video id="comp-vid-right-3" class="absolute inset-0 w-full h-full object-cover" autoplay="" loop="" muted="" playsinline=""></video>
-                <video id="comp-vid-left-3" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay="" loop="" muted="" playsinline=""></video>
+              <div id="comp-video-wrap-3" class="absolute inset-0 w-full h-full">
+                <video id="comp-vid-right-3" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline></video>
+                <video id="comp-vid-left-3" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0);" autoplay loop muted playsinline></video>
               </div>
-              <canvas id="comp-canvas-3" class="w-full h-full block"></canvas>
               <div class="absolute top-2 left-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-rose-300 text-[11px] font-bold">AnySplat</div>
               <div class="absolute top-2 right-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-emerald-300 text-[11px] font-bold">WildAnySplat</div>
               <div id="divider-3" class="slider-divider" style="left: 50%;"></div>
               <div id="handle-3" class="slider-handle" style="left: 50%;"><i class="fa-solid fa-arrows-left-right text-xs"></i></div>
             </div>
           </div>
-          <p class="mt-2.5 text-xs text-slate-300 leading-relaxed">
-            Recovers a consistent canonical sandstone and sky appearance across internet photos while filtering foreground tourist crowds.
-          </p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- =====================================================================
-       9. MODAL: VIDEO TROUBLESHOOTING & DIAGNOSTICS
+       5. BIBTEX CITATION & FOOTER
        ===================================================================== -->
-  <div id="video-diag-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden text-sm text-slate-700">
-      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <i class="fa-solid fa-triangle-exclamation text-amber-400 text-lg"></i>
-          <h3 class="font-bold text-base">Why are videos sometimes not showing up on GitHub Pages?</h3>
-        </div>
-        <button onclick="closeVideoDiagnostics()" class="text-slate-400 hover:text-white text-lg px-2">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="p-6 overflow-y-auto space-y-4 leading-relaxed">
-        <p>
-          If your videos (like <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">WildAnySplat_FastForward.mov</code> or <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">limon_rgb_wasp.mp4</code>) appear blank or fail to play on GitHub Pages, it is usually caused by one of four common reasons:
-        </p>
-
-        <div class="space-y-3 text-xs sm:text-sm">
-          <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <strong class="text-slate-900 block mb-1">1. Large File Size (&gt; 100 MB) &amp; Git LFS</strong>
-            <p class="text-slate-600">
-              GitHub has a strict 100 MB file size limit per file. If your `.mp4` file is larger than 100 MB, Git refuses to push it unless you use <strong>Git LFS (Large File Storage)</strong>. Check your local file sizes: keep them under 50 MB or compress them using H.264/AAC codec.
-            </p>
-          </div>
-
-          <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <strong class="text-slate-900 block mb-1">2. Incorrect Codec (HEVC / ProRes instead of H.264)</strong>
-            <p class="text-slate-600">
-              macOS QuickTime screen recordings often record in HEVC (H.265) or Apple ProRes, which Chrome and Firefox on Windows/Linux cannot decode without specific hardware. <strong>Always re-encode your MP4s with H.264 video and AAC audio</strong> (e.g., using HandBrake or ffmpeg: <code class="font-mono text-xs bg-slate-200 px-1 py-0.5 rounded">ffmpeg -i input.mov -vcodec libx264 -acodec aac output.mp4</code>).
-            </p>
-          </div>
-
-          <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <strong class="text-slate-900 block mb-1">3. File Path Case Sensitivity</strong>
-            <p class="text-slate-600">
-              Linux servers powering GitHub Pages are strictly case-sensitive. If your file is named <code class="font-mono">Limon_rgb_Wasp.mp4</code> but your HTML requests <code class="font-mono">limon_rgb_wasp.mp4</code>, the server will return a 404 error.
-            </p>
-          </div>
-        </div>
-
-        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs">
-          <p class="font-bold mb-1">Instant Fallback Built-in:</p>
-          <p>
-            If any video fails to load, this project page automatically falls back to our high-fidelity <strong>60FPS procedural scene renderer</strong> so your viewers can always interact with the comparison sliders and teaser immediately!
-          </p>
-        </div>
-      </div>
-
-      <div class="px-6 py-3 bg-slate-100 border-t border-slate-200 flex justify-end">
-        <button onclick="closeVideoDiagnostics()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
-          Got It
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: GITHUB HOSTING GUIDE -->
+  <section id="bibtex" class="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">BibTeX</h2>
+      <button onclick="copySnippet('bibtex-block', this)" class="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition inline-flex items-center gap-1.5">
         <i class="fa-regular fa-copy"></i>
         <span>Copy BibTeX</span>
-      
-    
+      </button>
+    </div>
     <div class="rounded-xl bg-slate-100 border border-slate-200 p-4 sm:p-5">
-      <pre id="bibtex-block" class="text-xs sm:text-sm font-mono text-slate-800 overflow-x-auto leading-relaxed editable-field"><code>@inproceedings{shaw2026wildanysplat,
+      <pre id="bibtex-block" class="text-xs sm:text-sm font-mono text-slate-800 overflow-x-auto leading-relaxed"><code>@inproceedings{shaw2026wildanysplat,
   author    = {Shaw, Richard and Moreau, Arthur and Papaioannou, Athanasios and Tanay, Thomas and Zhang, Zhensong and P\'{e}rez-Pellitero, Eduardo},
   title     = {WildAnySplat: Feed-Forward 3D Gaussian Splatting in the Wild},
   year      = {2026},
@@ -1433,232 +471,90 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
   numpages  = {11}
 }</code></pre>
     </div>
+  </section>
 
-    <!-- Related Links & Concurrent Work -->
-    <div class="mt-10 pt-8 border-t border-slate-200">
-      <h3 class="text-lg font-bold text-slate-900 mb-3">Related Links &amp; Concurrent Work</h3>
-      <ul class="space-y-2 text-xs sm:text-sm text-slate-600 list-disc list-inside leading-relaxed">
-        <li>
-          <a href="https://arthurmoreau.github.io/OffTheGrid/" target="_blank" rel="noopener" class="text-nerfies-link font-medium hover:underline">Off The Grid: Detection of Primitives for Feed-Forward 3D Gaussian Splatting</a> (Moreau, Shaw et al., CVPR 2026) — Sub-pixel primitive detection for feed-forward 3DGS.
-        </li>
-        <li>
-          <a href="https://ico3d.github.io/" target="_blank" rel="noopener" class="text-nerfies-link font-medium hover:underline">Ico3D</a> (Shaw et al.) — Our related 3D reconstruction research page.
-        </li>
-        <li>
-          <span class="font-medium text-slate-800">CHROMA: Consistent Harmonization of Multi-View Appearance via Bilateral Grid Prediction</span> (Shin, Shaw, Shin, Zhang, Jeon et al., ICLR 2026) — Multi-view bilateral grid appearance harmonization.
-        </li>
-        <li>
-          <span class="font-medium text-slate-800">AnySplat: Feed-forward 3D Gaussian Splatting from Unconstrained Views</span> (Jiang et al., ACM TOG 2025) — The feed-forward VGGT-based 3DGS backbone extended by WildAnySplat.
-        </li>
-        <li>
-          <span class="font-medium text-slate-800">WildGaussians: 3D Gaussian Splatting in the Wild</span> (Kulhanek et al., NeurIPS 2024) — Used offline to generate pseudo-clean supervision and uncertainty maps on hold-out training scenes.
-        </li>
-      </ul>
-    </div>
-  
-
-  <!-- =====================================================================
-       8. ACADEMIC FOOTER (Crediting Nerfies, Ico3D, Off-the-Grid)
-       ===================================================================== -->
+  <!-- ACADEMIC FOOTER (Crediting Nerfies) -->
   <footer class="py-10 px-4 sm:px-6 border-t border-slate-200 bg-slate-50 text-center text-xs sm:text-sm text-slate-500">
     <div class="max-w-3xl mx-auto space-y-2">
       <p>
-        This project page template is adapted from <a href="https://nerfies.github.io/" target="_blank" rel="noopener" class="text-nerfies-link hover:underline">Nerfies</a>, <a href="https://ico3d.github.io/" target="_blank" rel="noopener" class="text-nerfies-link hover:underline">Ico3D</a>, and <a href="https://arthurmoreau.github.io/OffTheGrid/" target="_blank" rel="noopener" class="text-nerfies-link hover:underline">Off-the-Grid</a>.
+        This project page template is adapted from <a href="https://nerfies.github.io/" target="_blank" rel="noopener" class="text-sky-700 hover:underline">Nerfies</a>.
       </p>
       <p>
-        © 2026 Richard Shaw, Arthur Moreau, Athanasios Papaioannou, Thomas Tanay, Zhang Zhensong, and Eduardo Pérez-Pellitero (Huawei Noah's Ark Lab, London, UK). Licensed under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener" class="text-nerfies-link hover:underline">Creative Commons Attribution 4.0 International License</a>.
+        © 2026 Richard Shaw, Arthur Moreau, Athanasios Papaioannou, Thomas Tanay, Zhang Zhensong, and Eduardo Pérez-Pellitero (Huawei Noah's Ark Lab, London, UK).
       </p>
     </div>
   </footer>
 
-  <!-- =====================================================================
-       9. MODAL: HOW TO HOST ON GITHUB PAGES, HUGGING FACE & ARXIV
-       ===================================================================== -->
-  
+  <!-- HOSTING MODAL -->
+  <div id="hosting-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg text-slate-900">GitHub Pages Hosting Guide</h3>
+        <button onclick="closeHostingModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-sm text-slate-600 mb-4">
+        Your site is live at <a href="https://wildanysplat.github.io/" class="text-blue-600 underline font-semibold" target="_blank">https://wildanysplat.github.io/</a>. Make sure your repository is named <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">wildanysplat.github.io</code> with <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">index.html</code> at the root.
+      </p>
+      <div class="flex justify-end">
+        <button onclick="closeHostingModal()" class="px-4 py-2 rounded-lg bg-slate-800 text-white text-xs font-semibold">Got It</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- =====================================================================
-       JAVASCRIPT: SYNCHRONIZED 3DGS SIMULATIONS, VIDEO SLIDERS & EXPORT
-       ===================================================================== -->
   <script>
-    // Global Animation & Playback State
     let globalPaused = false;
     let globalSpeed = 1.0;
-    let simTime = 0;
-    let lastTimestamp = performance.now();
-    let authorEditMode = false;
-    let teaserModeVideo = true; // true = try HTML5 video, false = 60FPS canvas simulation
+    const sliderPositions = [0.5, 0.5, 0.5, 0.5];
 
-    // Track whether a comparison slot is using uploaded HTML5 <video> or live 3DGS canvas
-    const customVideoActive = [true, false, false, false];
-    const sliderPositions = [0.50, 0.50, 0.50, 0.50];
+    function initComparisonSliders() {
+      document.querySelectorAll('.comparison-container').forEach((container) => {
+        const index = parseInt(container.getAttribute('data-slider-index') || '0', 10);
+        const divider = document.getElementById(`divider-${index}`);
+        const handle = document.getElementById(`handle-${index}`);
+        const vidLeft = document.getElementById(`comp-vid-left-${index}`);
 
-    // =====================================================================
-    // 2. QUANTITATIVE BENCHMARK TABLES SWITCHER
-    // =====================================================================
-    // 2. QUANTITATIVE BENCHMARK TABLES SWITCHER (Table 1 Exact Paper Numbers)
-    // =====================================================================
-    // 8. VIDEO LOADING & DIAGNOSTICS HANDLERS
-    // =====================================================================
-    function loadCustomTeaserVideo(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      activateTeaserVideoBlob(URL.createObjectURL(file));
-    }
+        let isDragging = false;
 
-    function activateTeaserVideoBlob(url) {
-      const video = document.getElementById('teaser-video');
-      const canvasWrap = document.getElementById('teaser-canvas-wrapper');
-      const statusIndicator = document.getElementById('teaser-status-indicator');
-      video.src = url;
-      video.classList.remove('hidden');
-      canvasWrap.classList.add('hidden');
-      if (statusIndicator) statusIndicator.className = 'w-2 h-2 rounded-full bg-emerald-400';
-      teaserModeVideo = true;
-      video.play().catch(() => {});
-    }
-
-    function toggleTeaserDisplayMode() {
-      teaserModeVideo = !teaserModeVideo;
-      const video = document.getElementById('teaser-video');
-      const canvasWrap = document.getElementById('teaser-canvas-wrapper');
-      const toggleBtn = document.getElementById('teaser-toggle-mode');
-      const statusIndicator = document.getElementById('teaser-status-indicator');
-
-      if (teaserModeVideo) {
-        video.classList.remove('hidden');
-        canvasWrap.classList.add('hidden');
-        if (toggleBtn) toggleBtn.textContent = 'Switch to 60FPS Simulation';
-        if (statusIndicator) statusIndicator.className = 'w-2 h-2 rounded-full bg-emerald-400';
-        video.play().catch(() => {});
-      } else {
-        video.pause();
-        video.classList.add('hidden');
-        canvasWrap.classList.remove('hidden');
-        if (toggleBtn) toggleBtn.textContent = 'Switch to Video Element';
-        if (statusIndicator) statusIndicator.className = 'w-2 h-2 rounded-full bg-blue-400';
-      }
-    }
-
-    function toggleVideoUploadPanel(index) {
-      const panel = document.getElementById(`upload-panel-${index}`);
-      if (panel) panel.classList.toggle('hidden');
-    }
-
-    function loadLimonVideoPair(event) {
-      const files = Array.from(event.target.files || []);
-      if (files.length === 0) return;
-
-      files.forEach(file => {
-        const name = file.name.toLowerCase();
-        if (name.includes('wasp') || name.includes('wild') || name.includes('ours')) {
-          assignComparisonVideoFile(0, 'right', file);
-        } else if (name.includes('asp') || name.includes('anysplat')) {
-          assignComparisonVideoFile(0, 'left', file);
+        function updateSliderPosition(clientX) {
+          const rect = container.getBoundingClientRect();
+          let x = clientX - rect.left;
+          let percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
+          sliderPositions[index] = percent / 100;
+          if (divider) divider.style.left = `${percent}%`;
+          if (handle) handle.style.left = `${percent}%`;
+          if (vidLeft) vidLeft.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
         }
+
+        container.addEventListener('mousedown', (e) => { isDragging = true; updateSliderPosition(e.clientX); e.preventDefault(); });
+        window.addEventListener('mousemove', (e) => { if (isDragging) updateSliderPosition(e.clientX); });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        container.addEventListener('touchstart', (e) => { if (e.touches[0]) { isDragging = true; updateSliderPosition(e.touches[0].clientX); } }, { passive: true });
+        window.addEventListener('touchmove', (e) => { if (isDragging && e.touches[0]) updateSliderPosition(e.touches[0].clientX); }, { passive: true });
+        window.addEventListener('touchend', () => { isDragging = false; });
       });
+    }
 
-      if (files.length === 2) {
-        assignComparisonVideoFile(0, 'left', files[0]);
-        assignComparisonVideoFile(0, 'right', files[1]);
-      } else if (files.length === 1) {
-        assignComparisonVideoFile(0, 'right', files[0]);
+    function centerAllSliders() {
+      for (let i = 0; i < 4; i++) {
+        sliderPositions[i] = 0.5;
+        const divider = document.getElementById(`divider-${i}`);
+        const handle = document.getElementById(`handle-${i}`);
+        const vidLeft = document.getElementById(`comp-vid-left-${i}`);
+        if (divider) divider.style.left = '50%';
+        if (handle) handle.style.left = '50%';
+        if (vidLeft) vidLeft.style.clipPath = 'inset(0 50% 0 0)';
       }
     }
 
-    function loadComparisonVideo(index, side, event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      assignComparisonVideoFile(index, side, file);
-    }
-
-    function assignComparisonVideoFile(index, side, file) {
-      const url = URL.createObjectURL(file);
-      const vidLeft = document.getElementById(`comp-vid-left-${index}`);
-      const vidRight = document.getElementById(`comp-vid-right-${index}`);
-      const wrap = document.getElementById(`comp-video-wrap-${index}`);
-      const canvas = document.getElementById(`comp-canvas-${index}`);
-
-      if (side === 'left' && vidLeft) vidLeft.src = url;
-      else if (side === 'right' && vidRight) vidRight.src = url;
-
-      customVideoActive[index] = true;
-      if (wrap) wrap.classList.remove('hidden');
-      if (canvas) canvas.classList.add('hidden');
-
-      if (vidLeft && vidLeft.src) {
-        vidLeft.currentTime = 0;
-        vidLeft.playbackRate = globalSpeed;
-        vidLeft.play().catch(() => {});
-      }
-      if (vidRight && vidRight.src) {
-        vidRight.currentTime = 0;
-        vidRight.playbackRate = globalSpeed;
-        vidRight.play().catch(() => {});
-      }
-    }
-
-    // Robust error handler: if HTML5 video fails to load (e.g. 404 or unsupported codec), gracefully fall back to 60FPS canvas simulation
-    function setupVideoErrorFallbacks() {
-      const teaserVideo = document.getElementById('teaser-video');
-      if (teaserVideo) {
-        teaserVideo.addEventListener('error', () => {
-          console.warn('Teaser video failed to load or unsupported. Falling back to procedural canvas simulation.');
-          teaserModeVideo = false;
-          teaserVideo.classList.add('hidden');
-          document.getElementById('teaser-canvas-wrapper').classList.remove('hidden');
-          const statusIndicator = document.getElementById('teaser-status-indicator');
-          if (statusIndicator) statusIndicator.className = 'w-2 h-2 rounded-full bg-rose-500';
-          const toggleBtn = document.getElementById('teaser-toggle-mode');
-          if (toggleBtn) toggleBtn.textContent = 'Using 60FPS Simulation (Video Not Found)';
-        });
-      }
-
-      const limonLeft = document.getElementById('comp-vid-left-0');
-      const limonRight = document.getElementById('comp-vid-right-0');
-      const handleLimonError = () => {
-        console.warn('Limon comparison videos failed to load. Falling back to live 60FPS canvas renderer.');
-        customVideoActive[0] = false;
-        document.getElementById('comp-video-wrap-0').classList.add('hidden');
-        document.getElementById('comp-canvas-0').classList.remove('hidden');
-      };
-
-      if (limonLeft) limonLeft.addEventListener('error', handleLimonError);
-      if (limonRight) limonRight.addEventListener('error', handleLimonError);
-
-      // Also check readyState after 1.5 seconds; if video hasn't loaded data, trigger fallback
-      setTimeout(() => {
-        if (teaserVideo && teaserVideo.readyState === 0 && teaserModeVideo) {
-          teaserVideo.dispatchEvent(new Event('error'));
-        }
-        if (limonLeft && limonLeft.readyState === 0 && customVideoActive[0]) {
-          handleLimonError();
-        }
-      }, 1500);
-    }
-
-    function openVideoDiagnostics() {
-      document.getElementById('video-diag-modal').classList.remove('hidden');
-    }
-
-    function closeVideoDiagnostics() {
-      document.getElementById('video-diag-modal').classList.add('hidden');
-    }
-
-    // =====================================================================
-    // 9. PLAYBACK SPEED, PAUSE, METHOD FIGURE UPLOAD, COPY & EXPORT
-    // =====================================================================
     function toggleGlobalPause() {
       globalPaused = !globalPaused;
       const icon = document.getElementById('global-play-icon');
       const text = document.getElementById('global-play-text');
       if (icon) icon.className = globalPaused ? 'fa-solid fa-play' : 'fa-solid fa-pause';
       if (text) text.textContent = globalPaused ? 'Resume All' : 'Pause All';
-
       document.querySelectorAll('video').forEach(v => {
-        if (!v.classList.contains('hidden')) {
-          if (globalPaused) v.pause();
-          else v.play().catch(() => {});
-        }
+        if (globalPaused) v.pause();
+        else v.play().catch(() => {});
       });
     }
 
@@ -1673,9 +569,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         normBtn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-900 text-amber-400 text-xs font-semibold border border-amber-500/40 transition';
         slowBtn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition';
       }
-      document.querySelectorAll('video').forEach(v => {
-        v.playbackRate = speed;
-      });
+      document.querySelectorAll('video').forEach(v => { v.playbackRate = speed; });
     }
 
     function loadCustomMethodFigure(event) {
@@ -1697,105 +591,17 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-
       const originalHTML = btn.innerHTML;
       btn.innerHTML = '<i class="fa-solid fa-check text-emerald-500 mr-1"></i>Copied!';
       setTimeout(() => { btn.innerHTML = originalHTML; }, 1800);
     }
 
-    function toggleAuthorEditMode() {
-      authorEditMode = !authorEditMode;
-      const banner = document.getElementById('author-config-banner');
-      const label = document.getElementById('edit-btn-label');
-      if (banner) banner.classList.toggle('hidden', !authorEditMode);
-      if (label) label.textContent = authorEditMode ? 'Finish Editing' : 'Edit Text & Links';
+    function openHostingModal() { document.getElementById('hosting-modal').classList.remove('hidden'); }
+    function closeHostingModal() { document.getElementById('hosting-modal').classList.add('hidden'); }
 
-      document.querySelectorAll('.editable-field').forEach(el => {
-        el.setAttribute('contenteditable', authorEditMode ? 'true' : 'false');
-      });
-    }
-
-    function updateResourceLinks() {
-      const map = [
-        ['input-pdf-url', 'link-pdf'],
-        ['input-supp-url', 'link-supp'],
-        ['input-arxiv-url', 'link-arxiv'],
-        ['input-github-url', 'link-github'],
-        ['input-hf-url', 'link-hf']
-      ];
-      map.forEach(([inputId, linkId]) => {
-        const inp = document.getElementById(inputId);
-        const lnk = document.getElementById(linkId);
-        if (inp && lnk) lnk.setAttribute('href', inp.value.trim());
-      });
-    }
-
-    function openHostingModal() {
-      document.getElementById('hosting-modal').classList.remove('hidden');
-    }
-
-    function closeHostingModal() {
-      document.getElementById('hosting-modal').classList.add('hidden');
-    }
-
-    function exportCleanHTML() {
-      if (authorEditMode) toggleAuthorEditMode();
-      const clone = document.documentElement.cloneNode(true);
-      const toolbar = clone.querySelector('#author-toolbar');
-      const banner = clone.querySelector('#author-config-banner');
-      const modal = clone.querySelector('#hosting-modal');
-      if (toolbar) toolbar.remove();
-      if (banner) banner.remove();
-      if (modal) modal.remove();
-
-      const htmlContent = '<!DOCTYPE html>\n' + clone.outerHTML;
-      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'index.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    // =====================================================================
-    // 10. MAIN ANIMATION LOOP & WINDOW INITIALIZATION
-    // =====================================================================
-    function animateLoop(now) {
-      const dt = Math.min((now - lastTimestamp) / 1000, 0.1);
-      lastTimestamp = now;
-
-      if (!globalPaused) {
-        simTime += dt * globalSpeed;
-      }
-
-      if (!teaserModeVideo) {
-        drawTeaserFastForward(simTime);
-      }
-      drawLimonInputsPreview(simTime);
-
-      for (let i = 0; i < 4; i++) {
-        if (customVideoActive[i]) {
-          // If video is active, sync playback rate
-          const vRight = document.getElementById(`comp-vid-right-${i}`);
-          if (vRight && Math.abs(vRight.playbackRate - globalSpeed) > 0.01) {
-            vRight.playbackRate = globalSpeed;
-          }
-        } else {
-          renderComparisonSliderCanvas(i, simTime);
-        }
-      }
-
-      requestAnimationFrame(animateLoop);
-    }
-
-    window.onload = function () {
-      switchBenchmarkTab('realx3d');
+    window.onload = function() {
       initComparisonSliders();
-      setupVideoErrorFallbacks();
-      lastTimestamp = performance.now();
-      requestAnimationFrame(animateLoop);
     };
   </script>
-
-</body></html>
+</body>
+</html>
