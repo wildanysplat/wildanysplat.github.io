@@ -142,17 +142,17 @@
 
     <!-- Authors List with Exact Hyperlinks -->
     <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-base sm:text-lg font-medium text-slate-800 mb-3">
-      <a href="https://scholar.google.com/citations?user=9qqtzK4AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Richard Shaw</a><sup>1</sup>,
-      <a href="https://scholar.google.com/citations?user=fMmoHX0AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Arthur Moreau</a><sup>1</sup>,
-      <a href="https://apapaion.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Athanasios Papaioannou</a><sup>1</sup>,
-      <a href="https://thomas-tanay.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Thomas Tanay</a><sup>1</sup>,
-      <a href="https://zhangzhensong.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Zhang Zhensong</a><sup>1</sup>, and
-      <a href="https://perezpellitero.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Eduardo Pérez-Pellitero</a><sup>1</sup>
+      <a href="https://scholar.google.com/citations?user=9qqtzK4AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Richard Shaw</a>,
+      <a href="https://scholar.google.com/citations?user=fMmoHX0AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Arthur Moreau</a>,
+      <a href="https://apapaion.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Athanasios Papaioannou</a>,
+      <a href="https://thomas-tanay.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Thomas Tanay</a>,
+      <a href="https://zhangzhensong.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Zhang Zhensong</a>, and
+      <a href="https://perezpellitero.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Eduardo Pérez-Pellitero</a>
     </div>
 
     <!-- Affiliation -->
     <p class="text-sm sm:text-base text-slate-600 font-medium mb-8">
-      <sup>1</sup>Huawei Noah’s Ark Lab, London, UK
+      Huawei Noah’s Ark Lab, London, UK
     </p>
 
     <!-- Dark Pill Action Buttons (Paper, arXiv, Code, Weights, BibTeX) -->
@@ -181,10 +181,6 @@
         <i class="fa-solid fa-quote-left text-emerald-400"></i>
         <span>BibTeX</span>
       </a>
-      <button onclick="openHostingModal()" class="nerfies-btn bg-sky-700 hover:bg-sky-800">
-        <i class="fa-solid fa-rocket text-cyan-200"></i>
-        <span>Hosting Guide</span>
-      </button>
     </div>
   </header>
 
@@ -358,9 +354,10 @@
       <div class="rounded-2xl bg-slate-800/70 border border-slate-700 p-4 sm:p-6 mb-8 shadow-2xl">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div class="flex items-center gap-2">
-            <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">Featured Scene</span>
-            <h3 class="text-lg sm:text-xl font-bold text-white">RealX3D — Limon</h3>
+            <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">Selected Scene</span>
+            <h3 id="featured-scene-title" aria-live="polite" class="text-lg sm:text-xl font-bold text-white">RealX3D — Limon</h3>
           </div>
+          <p class="text-xs sm:text-sm text-slate-400">Drag the divider to compare the two methods.</p>
         </div>
 
         <div class="w-full">
@@ -389,12 +386,16 @@
         </div>
       </div>
 
-      <!-- SECONDARY BENCHMARK SLIDERS -->
+      <!-- Clicking a preview swaps its scene with the featured comparison. -->
+      <p class="text-sm text-slate-300 mb-4">Click a smaller result to show it above. The previous large result moves into its place.</p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- RealX3D MilkCookie -->
-        <div class="rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between">
+        <div class="relative rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between transition-colors hover:bg-slate-800 hover:border-emerald-500/70 focus-within:ring-2 focus-within:ring-emerald-400 focus-within:ring-offset-2 focus-within:ring-offset-slate-900">
           <div>
-            <h4 class="font-bold text-sm sm:text-base text-white mb-2">RealX3D — MilkCookie</h4>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h4 id="preview-scene-title-1" class="font-bold text-sm sm:text-base text-white">RealX3D — MilkCookie</h4>
+              <span class="text-[11px] text-emerald-300 font-semibold whitespace-nowrap pt-0.5"><i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>Enlarge</span>
+            </div>
             <div class="comparison-container aspect-[16/10] w-full" data-slider-index="1">
               <div id="comp-video-wrap-1" class="absolute inset-0 w-full h-full">
                 <video id="comp-vid-right-1" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline>
@@ -407,15 +408,18 @@
               <div class="absolute top-2 left-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-rose-300 text-[11px] font-bold">AnySplat</div>
               <div class="absolute top-2 right-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-emerald-300 text-[11px] font-bold">WildAnySplat</div>
               <div id="divider-1" class="slider-divider" style="left: 50%;"></div>
-              <div id="handle-1" class="slider-handle" style="left: 50%;"><i class="fa-solid fa-arrows-left-right text-xs"></i></div>
             </div>
           </div>
+          <button type="button" id="scene-select-1" onclick="promoteComparison(1)" aria-label="Show RealX3D MilkCookie in the large comparison" class="absolute inset-0 z-40 w-full h-full rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"></button>
         </div>
 
         <!-- RealX3D GearWorks -->
-        <div class="rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between">
+        <div class="relative rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between transition-colors hover:bg-slate-800 hover:border-emerald-500/70 focus-within:ring-2 focus-within:ring-emerald-400 focus-within:ring-offset-2 focus-within:ring-offset-slate-900">
           <div>
-            <h4 class="font-bold text-sm sm:text-base text-white mb-2">RealX3D — GearWorks</h4>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h4 id="preview-scene-title-2" class="font-bold text-sm sm:text-base text-white">RealX3D — GearWorks</h4>
+              <span class="text-[11px] text-emerald-300 font-semibold whitespace-nowrap pt-0.5"><i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>Enlarge</span>
+            </div>
             <div class="comparison-container aspect-[16/10] w-full" data-slider-index="2">
               <div id="comp-video-wrap-2" class="absolute inset-0 w-full h-full">
                 <video id="comp-vid-right-2" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline>
@@ -428,15 +432,18 @@
               <div class="absolute top-2 left-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-rose-300 text-[11px] font-bold">AnySplat</div>
               <div class="absolute top-2 right-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-emerald-300 text-[11px] font-bold">WildAnySplat</div>
               <div id="divider-2" class="slider-divider" style="left: 50%;"></div>
-              <div id="handle-2" class="slider-handle" style="left: 50%;"><i class="fa-solid fa-arrows-left-right text-xs"></i></div>
             </div>
           </div>
+          <button type="button" id="scene-select-2" onclick="promoteComparison(2)" aria-label="Show RealX3D GearWorks in the large comparison" class="absolute inset-0 z-40 w-full h-full rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"></button>
         </div>
 
         <!-- Phototourism Brandenburg Gate -->
-        <div class="rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between">
+        <div class="relative rounded-xl bg-slate-800/60 border border-slate-700/80 p-3.5 flex flex-col justify-between transition-colors hover:bg-slate-800 hover:border-emerald-500/70 focus-within:ring-2 focus-within:ring-emerald-400 focus-within:ring-offset-2 focus-within:ring-offset-slate-900">
           <div>
-            <h4 class="font-bold text-sm sm:text-base text-white mb-2">Phototourism — Brandenburg Gate</h4>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h4 id="preview-scene-title-3" class="font-bold text-sm sm:text-base text-white">Phototourism — Brandenburg Gate</h4>
+              <span class="text-[11px] text-emerald-300 font-semibold whitespace-nowrap pt-0.5"><i class="fa-solid fa-up-right-and-down-left-from-center mr-1" aria-hidden="true"></i>Enlarge</span>
+            </div>
             <div class="comparison-container aspect-[16/10] w-full" data-slider-index="3">
               <div id="comp-video-wrap-3" class="absolute inset-0 w-full h-full">
                 <video id="comp-vid-right-3" class="absolute inset-0 w-full h-full object-cover" autoplay loop muted playsinline>
@@ -449,9 +456,9 @@
               <div class="absolute top-2 left-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-rose-300 text-[11px] font-bold">AnySplat</div>
               <div class="absolute top-2 right-2 z-30 pointer-events-none px-2 py-0.5 rounded bg-slate-950/75 text-emerald-300 text-[11px] font-bold">WildAnySplat</div>
               <div id="divider-3" class="slider-divider" style="left: 50%;"></div>
-              <div id="handle-3" class="slider-handle" style="left: 50%;"><i class="fa-solid fa-arrows-left-right text-xs"></i></div>
             </div>
           </div>
+          <button type="button" id="scene-select-3" onclick="promoteComparison(3)" aria-label="Show Phototourism Brandenburg Gate in the large comparison" class="absolute inset-0 z-40 w-full h-full rounded-xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"></button>
         </div>
       </div>
     </div>
@@ -497,29 +504,69 @@
     </div>
   </footer>
 
-  <!-- HOSTING MODAL -->
-  <div id="hosting-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-bold text-lg text-slate-900">GitHub Pages Hosting Guide</h3>
-        <button onclick="closeHostingModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <p class="text-sm text-slate-600 mb-4">
-        Your site is live at <a href="https://wildanysplat.github.io/" class="text-blue-600 underline font-semibold" target="_blank">https://wildanysplat.github.io/</a>. Make sure your repository is named <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">wildanysplat.github.io</code> with <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">index.html</code> at the root.
-      </p>
-      <div class="flex justify-end">
-        <button onclick="closeHostingModal()" class="px-4 py-2 rounded-lg bg-slate-800 text-white text-xs font-semibold">Got It</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     let globalPaused = false;
     let globalSpeed = 1.0;
     const sliderPositions = [0.5, 0.5, 0.5, 0.5];
 
+    const comparisonScenes = [
+      { title: 'RealX3D — Limon', shortLabel: 'RealX3D Limon', asp: './limon_rgb_asp.mp4', wasp: './limon_rgb_wasp.mp4' },
+      { title: 'RealX3D — MilkCookie', shortLabel: 'RealX3D MilkCookie', asp: './milkcookie_rgb_asp.mp4', wasp: './milkcookie_rgb_wasp.mp4' },
+      { title: 'RealX3D — GearWorks', shortLabel: 'RealX3D GearWorks', asp: './gearworks_rgb_asp.mp4', wasp: './gearworks_rgb_wasp.mp4' },
+      { title: 'Phototourism — Brandenburg Gate', shortLabel: 'Phototourism Brandenburg Gate', asp: './brandenburg_gate_rgb_asp.mp4', wasp: './brandenburg_gate_rgb_wasp.mp4' },
+    ];
+    // Slot 0 is the large viewer; 1-3 are selectable preview slots.
+    const sceneInSlot = [0, 1, 2, 3];
+
+    function updateVideoSource(video, filename) {
+      if (!video) return;
+      video.pause();
+      // Replace the <source> elements rather than leaving stale fallback paths.
+      video.replaceChildren();
+      const source = document.createElement('source');
+      source.src = filename;
+      source.type = 'video/mp4';
+      video.appendChild(source);
+      video.load();
+      video.playbackRate = globalSpeed;
+      if (!globalPaused) video.play().catch(() => {});
+    }
+
+    function showSceneInSlot(slot) {
+      const scene = comparisonScenes[sceneInSlot[slot]];
+      updateVideoSource(document.getElementById(`comp-vid-left-${slot}`), scene.asp);
+      updateVideoSource(document.getElementById(`comp-vid-right-${slot}`), scene.wasp);
+      if (slot === 0) {
+        document.getElementById('featured-scene-title').textContent = scene.title;
+      } else {
+        document.getElementById(`preview-scene-title-${slot}`).textContent = scene.title;
+        document.getElementById(`scene-select-${slot}`).setAttribute('aria-label',
+          `Show ${scene.shortLabel} in the large comparison`);
+      }
+    }
+
+    function promoteComparison(previewSlot) {
+      if (previewSlot < 1 || previewSlot > 3) return;
+      // Swap slots so the outgoing featured scene remains selectable below.
+      [sceneInSlot[0], sceneInSlot[previewSlot]] =
+        [sceneInSlot[previewSlot], sceneInSlot[0]];
+      showSceneInSlot(0);
+      showSceneInSlot(previewSlot);
+      // Center both comparisons after switching scenes.
+      sliderPositions[0] = 0.5;
+      sliderPositions[previewSlot] = 0.5;
+      for (const slot of [0, previewSlot]) {
+        const divider = document.getElementById(`divider-${slot}`);
+        const handle = document.getElementById(`handle-${slot}`);
+        const left = document.getElementById(`comp-vid-left-${slot}`);
+        if (divider) divider.style.left = '50%';
+        if (handle) handle.style.left = '50%';
+        if (left) left.style.clipPath = 'inset(0 50% 0 0)';
+      }
+    }
+
     function initComparisonSliders() {
-      document.querySelectorAll('.comparison-container').forEach((container) => {
+      document.querySelectorAll('.comparison-container[data-slider-index="0"]').forEach((container) => {
         const index = parseInt(container.getAttribute('data-slider-index') || '0', 10);
         const divider = document.getElementById(`divider-${index}`);
         const handle = document.getElementById(`handle-${index}`);
@@ -607,9 +654,6 @@
       btn.innerHTML = '<i class="fa-solid fa-check text-emerald-500 mr-1"></i>Copied!';
       setTimeout(() => { btn.innerHTML = originalHTML; }, 1800);
     }
-
-    function openHostingModal() { document.getElementById('hosting-modal').classList.remove('hidden'); }
-    function closeHostingModal() { document.getElementById('hosting-modal').classList.add('hidden'); }
 
     window.onload = function() {
       initComparisonSliders();
