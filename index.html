@@ -140,15 +140,15 @@
       <span class="wild-gradient">WildAnySplat</span>: Feed-Forward 3D Gaussian Splatting in the Wild
     </h1>
 
-    <!-- Authors List with Exact Hyperlinks -->
-    <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-base sm:text-lg font-medium text-slate-800 mb-3">
-      <a href="https://scholar.google.com/citations?user=9qqtzK4AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Richard Shaw</a>,
-      <a href="https://scholar.google.com/citations?user=fMmoHX0AAAAJ&hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Arthur Moreau</a>,
+    <!-- Author links, with punctuation in normal inline text flow -->
+    <p class="text-center text-base sm:text-lg font-medium text-slate-800 mb-3 leading-relaxed">
+      <a href="https://scholar.google.com/citations?user=9qqtzK4AAAAJ&amp;hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Richard Shaw</a>,
+      <a href="https://scholar.google.com/citations?user=fMmoHX0AAAAJ&amp;hl=en" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Arthur Moreau</a>,
       <a href="https://apapaion.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Athanasios Papaioannou</a>,
       <a href="https://thomas-tanay.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Thomas Tanay</a>,
       <a href="https://zhangzhensong.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Zhang Zhensong</a>, and
       <a href="https://perezpellitero.github.io/" target="_blank" rel="noopener" class="hover:text-blue-600 underline decoration-slate-300 underline-offset-4 transition">Eduardo Pérez-Pellitero</a>
-    </div>
+    </p>
 
     <!-- Affiliation -->
     <p class="text-sm sm:text-base text-slate-600 font-medium mb-8">
@@ -224,97 +224,16 @@
       </p>
     </div>
 
-    <!-- Method Overview Diagram (Figure 2 of Paper) -->
+    <!-- Method Overview: figure stored in the site repository root -->
     <div class="mt-12 pt-8 border-t border-slate-200">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Method Overview</h2>
-        <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition">
-          <i class="fa-regular fa-image"></i>
-          <span>Replace with Custom <code class="font-mono">method.png</code></span>
-          <input type="file" accept="image/*" onchange="loadCustomMethodFigure(event)" class="hidden" />
-        </label>
-      </div>
-
-      <!-- Optional uploaded method image -->
-      <img id="custom-method-img" alt="WildAnySplat Method Overview Figure" class="hidden w-full rounded-xl border border-slate-200 shadow-md mb-4" />
-
-      <!-- Crisp Vector Architecture Diagram of Figure 2 -->
-      <div id="default-method-svg" class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 sm:p-6 shadow-sm">
-        <svg viewBox="0 0 980 430" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
-            </marker>
-            <marker id="arrow-orange" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c" />
-            </marker>
-          </defs>
-
-          <!-- TOP STREAM: FROZEN CLEAN TEACHER -->
-          <rect x="18" y="18" width="944" height="122" rx="14" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5" stroke-dasharray="6,4" />
-          <text x="34" y="42" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="700" fill="#1e40af">
-            TRAINING ONLY: Frozen Clean Teacher Network f_θt (Pretrained VGGT Backbone)
-          </text>
-          <rect x="34" y="56" width="175" height="68" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5" />
-          <text x="121" y="80" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Clean Views {I_i^c}</text>
-          <text x="121" y="97" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#475569">Real Pairs + Synthetic Base</text>
-          <text x="121" y="112" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#475569">+ WildGaussians Pseudo-Clean</text>
-
-          <line x1="209" y1="90" x2="255" y2="90" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
-
-          <rect x="258" y="56" width="195" height="68" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5" />
-          <text x="355" y="83" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12.5" font-weight="700" fill="#1e3a8a">Frozen VGGT Teacher ❄️</text>
-          <text x="355" y="102" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1e40af">Clean Multi-View Attention</text>
-
-          <line x1="453" y1="90" x2="500" y2="90" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
-
-          <rect x="503" y="56" width="215" height="68" rx="8" fill="#ffffff" stroke="#60a5fa" stroke-width="1.5" />
-          <text x="610" y="82" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Teacher Pose C^t &amp; Depth D^t</text>
-          <text x="610" y="102" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#2563eb">L_distill = L_C + L_D</text>
-
-          <line x1="610" y1="124" x2="520" y2="188" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="4,3" marker-end="url(#arrow-orange)" />
-          <text x="655" y="160" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#ea580c">Geometric Distillation</text>
-
-          <!-- BOTTOM STREAM: TRAINABLE IN-THE-WILD STUDENT -->
-          <rect x="18" y="165" width="944" height="248" rx="14" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5" />
-          <text x="34" y="190" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="700" fill="#9a3412">
-            INFERENCE &amp; TRAINING: In-the-Wild Student Network f_θs (Single Feed-Forward Pass &lt; 3 sec)
-          </text>
-          <rect x="34" y="210" width="160" height="88" rx="8" fill="#ffffff" stroke="#fb923c" stroke-width="1.5" />
-          <text x="114" y="236" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#0f172a">In-the-Wild {I_i^w}</text>
-          <text x="114" y="255" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#dc2626">• Transient Occluders</text>
-          <text x="114" y="272" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#d97706">• Illumination &amp; ISP</text>
-
-          <line x1="194" y1="254" x2="232" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
-
-          <rect x="235" y="210" width="155" height="88" rx="8" fill="#ffedd5" stroke="#ea580c" stroke-width="1.8" />
-          <text x="312" y="246" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12.5" font-weight="700" fill="#7c2d12">Student VGGT</text>
-          <text x="312" y="264" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#9a3412">Cross-View Fusion</text>
-
-          <line x1="390" y1="254" x2="428" y2="254" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
-
-          <rect x="432" y="198" width="225" height="195" rx="10" fill="#ffffff" stroke="#fdba74" stroke-width="1.5" />
-          <text x="544" y="218" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="11.5" font-weight="700" fill="#0f172a">4 Dedicated Student DPT Heads</text>
-          <rect x="446" y="226" width="196" height="32" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
-          <text x="544" y="246" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#334155">1. Camera C^s &amp; 2. Depth D^s</text>
-          <rect x="446" y="266" width="196" height="38" rx="6" fill="#ecfdf5" stroke="#6ee7b7" />
-          <text x="544" y="283" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#065f46">3. Gaussians G^s + Static Mask M_i</text>
-          <rect x="446" y="312" width="196" height="38" rx="6" fill="#f5f3ff" stroke="#c4b5fd" />
-          <text x="544" y="329" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#5b21b6">4. Bilateral Grid Head B_i</text>
-
-          <line x1="657" y1="285" x2="698" y2="255" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
-          <line x1="657" y1="331" x2="698" y2="345" stroke="#475569" stroke-width="2" marker-end="url(#arrow)" />
-
-          <rect x="702" y="202" width="242" height="92" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.8" />
-          <text x="823" y="225" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#065f46">Transient-Aware Voxel Fusion</text>
-          <text x="823" y="246" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#047857">w_{i,p} ∝ exp(conf/τ)·M_i(p)</text>
-          <text x="823" y="266" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#065f46">Suppresses ghost Gaussians</text>
-
-          <rect x="702" y="308" width="242" height="84" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5" />
-          <text x="823" y="332" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="700" fill="#4c1d95">Per-View Appearance Transform</text>
-          <text x="823" y="352" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#5b21b6">I_i^s = B_i(I_i^{canon})</text>
-        </svg>
-      </div>
+      <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-4">Method Overview</h2>
+      <img
+        src="./WildAnySplat_method.png"
+        alt="WildAnySplat method overview diagram"
+        class="block w-full h-auto rounded-xl border border-slate-200 shadow-md"
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   </section>
 
@@ -629,16 +548,6 @@
         slowBtn.className = 'px-2.5 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition';
       }
       document.querySelectorAll('video').forEach(v => { v.playbackRate = speed; });
-    }
-
-    function loadCustomMethodFigure(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const img = document.getElementById('custom-method-img');
-      const svgWrap = document.getElementById('default-method-svg');
-      img.src = URL.createObjectURL(file);
-      img.classList.remove('hidden');
-      svgWrap.classList.add('hidden');
     }
 
     function copySnippet(elementId, btn) {
