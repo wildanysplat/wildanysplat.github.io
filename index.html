@@ -260,6 +260,15 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2 bg-slate-800/90 p-2 rounded-xl border border-slate-700">
+          <!-- Switch the selected comparison between RGB and depth (when both depth videos exist). -->
+          <div class="inline-flex items-center gap-1 p-1 bg-slate-950/70 rounded-lg border border-slate-600" role="group" aria-label="Selected comparison visualisation">
+            <button id="comparison-rgb-button" type="button" onclick="setComparisonMode('rgb')" aria-pressed="true" class="comparison-mode-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-900 text-amber-400 border border-amber-500/40 transition">
+              <i class="fa-solid fa-image" aria-hidden="true"></i> RGB
+            </button>
+            <button id="comparison-depth-button" type="button" onclick="setComparisonMode('depth')" aria-pressed="false" disabled title="Checking for depth videos" class="comparison-mode-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 border border-transparent transition disabled:opacity-40 disabled:cursor-not-allowed">
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i> Depth
+            </button>
+          </div>
           <button onclick="toggleGlobalPause()" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition inline-flex items-center gap-1.5">
             <i id="global-play-icon" class="fa-solid fa-pause"></i>
             <span id="global-play-text">Pause Selected</span>
@@ -281,7 +290,10 @@
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div class="flex items-center gap-2">
             <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">Selected Scene</span>
-            <h3 id="featured-scene-title" aria-live="polite" class="text-lg sm:text-xl font-bold text-white">RealX3D — Limon</h3>
+            <div>
+              <h3 id="featured-scene-title" aria-live="polite" class="text-lg sm:text-xl font-bold text-white">RealX3D — Limon</h3>
+              <p id="comparison-depth-status" role="status" aria-live="polite" class="text-xs text-slate-400 mt-1">Checking depth availability…</p>
+            </div>
           </div>
           <p class="text-xs sm:text-sm text-slate-400">Drag the divider to compare the two methods.</p>
         </div>
@@ -312,7 +324,7 @@
         </div>
       </div>
 
-      <!-- Only the featured video pair plays; previews remain on still frames. -->
+      <!-- Previews always show RGB still frames; RGB/Depth only switches the featured player. -->
       <p class="text-sm text-slate-300 mb-4">Click a smaller result to play it above. The previous large result moves into its place and pauses.</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- RealX3D MilkCookie -->
@@ -463,6 +475,18 @@
       { title: 'Phototourism — Brandenburg Gate', shortLabel: 'Phototourism Brandenburg Gate', asp: './brandenburg_gate_rgb_asp.mp4', wasp: './brandenburg_gate_rgb_wasp.mp4' },
       { title: 'Phototourism — Sacré-Cœur', shortLabel: 'Phototourism Sacré-Cœur', asp: './sacre_coeur_rgb_asp.mp4', wasp: './sacre_coeur_rgb_wasp.mp4' },
     ];
+    // The depth files use the same naming convention as RGB:
+    //   gearworks_rgb_asp.mp4  ->  gearworks_depth_asp.mp4
+    //   gearworks_rgb_wasp.mp4 ->  gearworks_depth_wasp.mp4
+    // A cheap HEAD check ensures both files exist before we enable "Depth".
+    comparisonScenes.forEach(scene => {
+      scene.depthAsp = scene.asp.replace('_rgb_', '_depth_');
+      scene.depthWasp = scene.wasp.replace('_rgb_', '_depth_');
+    });
+    const depthAvailable = comparisonScenes.map(() => null); // null = not yet checked
+    const depthCheckPromises = new Map();
+    let comparisonMode = 'rgb';
+
     // Slot 0 is the large viewer; the remaining slots are selectable previews.
     const sceneInSlot = comparisonScenes.map((_, index) => index);
     const sliderPositions = comparisonScenes.map(() => 0.5);
@@ -518,8 +542,13 @@
     function showSceneInSlot(slot) {
       const scene = comparisonScenes[sceneInSlot[slot]];
       const isFeatured = slot === 0;
-      updateVideoSource(document.getElementById(`comp-vid-left-${slot}`), scene.asp, isFeatured);
-      updateVideoSource(document.getElementById(`comp-vid-right-${slot}`), scene.wasp, isFeatured);
+      // Keep the smaller previews in RGB for instant scene recognition.
+      const useDepth = isFeatured && comparisonMode === 'depth'
+        && depthAvailable[sceneInSlot[0]] === true;
+      updateVideoSource(document.getElementById(`comp-vid-left-${slot}`),
+        useDepth ? scene.depthAsp : scene.asp, isFeatured);
+      updateVideoSource(document.getElementById(`comp-vid-right-${slot}`),
+        useDepth ? scene.depthWasp : scene.wasp, isFeatured);
       if (isFeatured) {
         document.getElementById('featured-scene-title').textContent = scene.title;
       } else {
@@ -529,8 +558,82 @@
       }
     }
 
+    function updateComparisonModeControls() {
+      const depthButton = document.getElementById('comparison-depth-button');
+      const rgbButton = document.getElementById('comparison-rgb-button');
+      const status = document.getElementById('comparison-depth-status');
+      const availability = depthAvailable[sceneInSlot[0]];
+      const canShowDepth = availability === true;
+
+      // Never try to load depth files unless the matching pair exists.
+      if (!canShowDepth && comparisonMode === 'depth') {
+        comparisonMode = 'rgb';
+        showSceneInSlot(0);
+        syncComparisonPlayback();
+      }
+      if (depthButton) {
+        depthButton.disabled = !canShowDepth;
+        depthButton.title = availability === null ? 'Checking for depth videos…'
+          : canShowDepth ? 'Show depth map comparison' : 'No depth video pair for this scene';
+      }
+      if (status) {
+        status.textContent = availability === null ? 'Checking depth availability…'
+          : canShowDepth ? 'RGB and depth comparisons available' : 'RGB only — depth not uploaded for this scene';
+      }
+      for (const [button, mode] of [[rgbButton, 'rgb'], [depthButton, 'depth']]) {
+        if (!button) continue;
+        const selected = comparisonMode === mode;
+        button.setAttribute('aria-pressed', String(selected));
+        button.classList.toggle('bg-slate-900', selected);
+        button.classList.toggle('text-amber-400', selected);
+        button.classList.toggle('border-amber-500/40', selected);
+        button.classList.toggle('font-semibold', selected);
+        button.classList.toggle('text-slate-300', !selected);
+        button.classList.toggle('border-transparent', !selected);
+        button.classList.toggle('font-medium', !selected);
+      }
+    }
+
+    // HEAD fetches only the file headers, not the video contents. The check is
+    // performed when a scene is selected (and cached for further selections).
+    async function checkDepthAvailability(sceneIndex) {
+      if (depthAvailable[sceneIndex] !== null) return depthAvailable[sceneIndex];
+      if (depthCheckPromises.has(sceneIndex)) return depthCheckPromises.get(sceneIndex);
+      const scene = comparisonScenes[sceneIndex];
+      if (!scene) return false;
+      async function hasFile(path) {
+        try {
+          const response = await fetch(path, { method: 'HEAD', cache: 'no-store' });
+          return response.ok;
+        } catch (_) {
+          return false; // Offline / missing video / inaccessible response
+        }
+      }
+      const check = Promise.all([hasFile(scene.depthAsp), hasFile(scene.depthWasp)])
+        .then(([aspExists, waspExists]) => {
+          depthAvailable[sceneIndex] = aspExists && waspExists;
+          // Ignore a completed async check for a scene no longer selected.
+          if (sceneInSlot[0] === sceneIndex) updateComparisonModeControls();
+          return depthAvailable[sceneIndex];
+        });
+      depthCheckPromises.set(sceneIndex, check);
+      return check;
+    }
+
+    function setComparisonMode(mode) {
+      if (mode !== 'rgb' && mode !== 'depth') return;
+      if (mode === 'depth' && depthAvailable[sceneInSlot[0]] !== true) return;
+      if (comparisonMode === mode) return;
+      comparisonMode = mode;
+      showSceneInSlot(0); // Only the active pair switches videos.
+      updateComparisonModeControls();
+      syncComparisonPlayback();
+    }
+
     function initComparisonPlayback() {
       for (let slot = 0; slot < sceneInSlot.length; slot++) showSceneInSlot(slot);
+      updateComparisonModeControls();
+      void checkDepthAvailability(sceneInSlot[0]);
       // Stop even the selected pair while the comparison section is offscreen.
       // This saves GPU decoding and bandwidth while visitors read the paper.
       const section = document.getElementById('comparisons');
@@ -551,6 +654,10 @@
       // Swap slots so the outgoing featured scene remains selectable below.
       [sceneInSlot[0], sceneInSlot[previewSlot]] =
         [sceneInSlot[previewSlot], sceneInSlot[0]];
+      // If the next scene has no confirmed depth pair, return to RGB.
+      if (depthAvailable[sceneInSlot[0]] !== true) comparisonMode = 'rgb';
+      updateComparisonModeControls();
+      void checkDepthAvailability(sceneInSlot[0]);
       showSceneInSlot(0);
       showSceneInSlot(previewSlot);
       syncComparisonPlayback();
