@@ -176,7 +176,11 @@
       </a>
       <a id="link-hf" href="https://huggingface.co/richardoshaw/WildAnySplat" rel="noopener noreferrer" target="_blank" class="nerfies-btn">
         <i class="fa-solid fa-box-archive text-yellow-400"></i>
-        <span>Weights (🤗 HF)</span>
+        <span>Weights</span>
+      </a>
+      <a id="link-demo" href="https://huggingface.co/spaces/richardoshaw/WildAnySplat" target="_blank" rel="noopener noreferrer" title="Try WildAnySplat in your browser" class="nerfies-btn">
+        <span aria-hidden="true" class="text-lg leading-none">🤗</span>
+        <span>Demo</span>
       </a>
       <a href="#bibtex" class="nerfies-btn">
         <i class="fa-solid fa-quote-left text-emerald-400"></i>
@@ -249,7 +253,7 @@
        ===================================================================== -->
   <section id="comparisons" class="py-12 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
     <div class="max-w-5xl mx-auto">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+      <div class="flex flex-col items-start gap-4 mb-8">
         <div>
           <span class="inline-block px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-2">
             Interactive Side-by-Side Results
@@ -259,7 +263,9 @@
           </h2>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 bg-slate-800/90 p-2 rounded-xl border border-slate-700">
+        <!-- A single compact, no-wrap toolbar, horizontally scrollable on small screens. -->
+        <div class="max-w-full overflow-x-auto pb-1">
+          <div class="inline-flex w-max flex-nowrap items-center gap-1.5 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700 whitespace-nowrap">
           <!-- Switch the selected comparison between RGB and depth (when both depth videos exist). -->
           <div class="inline-flex items-center gap-1 p-1 bg-slate-950/70 rounded-lg border border-slate-600" role="group" aria-label="Selected comparison visualisation">
             <button id="comparison-rgb-button" type="button" onclick="setComparisonMode('rgb')" aria-pressed="true" class="comparison-mode-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-900 text-amber-400 border border-amber-500/40 transition">
@@ -282,6 +288,7 @@
           <button onclick="centerAllSliders()" class="px-2.5 py-1.5 rounded-lg bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-medium transition">
             Center Sliders
           </button>
+          </div>
         </div>
       </div>
 
