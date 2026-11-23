@@ -156,36 +156,47 @@
       Huawei Noah’s Ark Lab, London, UK
     </p>
 
-    <!-- Dark Pill Action Buttons (Paper, arXiv, Code, Weights, BibTeX) -->
-    <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-      <a id="link-pdf" href="./wildanysplat.pdf" target="_blank" class="nerfies-btn">
-        <i class="fa-solid fa-file-pdf text-red-400"></i>
-        <span>Paper (PDF)</span>
-      </a>
-      <a id="link-supp" href="./wildanysplat_supp.pdf" target="_blank" class="nerfies-btn">
-        <i class="fa-solid fa-folder-open text-amber-400"></i>
-        <span>Supplementary</span>
-      </a>
-      <a id="link-arxiv" href="https://arxiv.org/abs/2603.wildanysplat" target="_blank" class="nerfies-btn">
-        <i class="fa-solid fa-graduation-cap text-blue-400"></i>
-        <span>arXiv</span>
-      </a>
-      <a id="link-github" href="https://github.com/wildanysplat/WildAnySplat" target="_blank" rel="noopener noreferrer" title="WildAnySplat inference code" class="nerfies-btn">
-        <i class="fa-brands fa-github text-white"></i>
-        <span>Code</span>
-      </a>
-      <a id="link-hf" href="https://huggingface.co/richardoshaw/WildAnySplat" rel="noopener noreferrer" target="_blank" class="nerfies-btn">
-        <i class="fa-solid fa-box-archive text-yellow-400"></i>
-        <span>Weights</span>
-      </a>
-      <a id="link-demo" href="https://huggingface.co/spaces/richardoshaw/WildAnySplat" target="_blank" rel="noopener noreferrer" title="Try WildAnySplat in your browser" class="nerfies-btn">
-        <span aria-hidden="true" class="text-lg leading-none">🤗</span>
-        <span>Demo</span>
-      </a>
-      <a href="#bibtex" class="nerfies-btn">
-        <i class="fa-solid fa-quote-left text-emerald-400"></i>
-        <span>BibTeX</span>
-      </a>
+    <!-- Publication resources: paper, supplement, arXiv, ACM, and citation -->
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3" aria-label="Publication resources">
+        <a id="link-pdf" href="./wildanysplat.pdf" target="_blank" rel="noopener noreferrer" class="nerfies-btn">
+          <i class="fa-solid fa-file-pdf text-red-400"></i>
+          <span>Paper (PDF)</span>
+        </a>
+        <a id="link-supp" href="./wildanysplat_supp.pdf" target="_blank" rel="noopener noreferrer" class="nerfies-btn">
+          <i class="fa-solid fa-folder-open text-amber-400"></i>
+          <span>Supplementary</span>
+        </a>
+        <!-- Once publicly announced, replace the href below with https://arxiv.org/abs/YYMM.NNNNN -->
+        <a id="link-arxiv" href="https://arxiv.org/search/?query=WildAnySplat&amp;searchtype=all" target="_blank" rel="noopener noreferrer" title="Find WildAnySplat on arXiv after its announcement" class="nerfies-btn">
+          <i class="fa-solid fa-graduation-cap text-blue-400"></i>
+          <span>Find on arXiv</span>
+        </a>
+        <a id="link-acm" href="https://dl.acm.org/doi/abs/10.1145/3829340.3842323" target="_blank" rel="noopener noreferrer" title="Official SIGGRAPH Asia 2026 paper in the ACM Digital Library" class="nerfies-btn">
+          <i class="fa-solid fa-book-open text-violet-400"></i>
+          <span>ACM Publication</span>
+        </a>
+        <a href="#bibtex" class="nerfies-btn">
+          <i class="fa-solid fa-quote-left text-emerald-400"></i>
+          <span>BibTeX</span>
+        </a>
+      </div>
+
+      <!-- Software and interactive resources -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3" aria-label="Code and demo resources">
+        <a id="link-github" href="https://github.com/wildanysplat/WildAnySplat" target="_blank" rel="noopener noreferrer" title="WildAnySplat inference code" class="nerfies-btn">
+          <i class="fa-brands fa-github text-white"></i>
+          <span>Code</span>
+        </a>
+        <a id="link-hf" href="https://huggingface.co/richardoshaw/WildAnySplat" target="_blank" rel="noopener noreferrer" class="nerfies-btn">
+          <i class="fa-solid fa-box-archive text-yellow-400"></i>
+          <span>Weights</span>
+        </a>
+        <a id="link-demo" href="https://huggingface.co/spaces/richardoshaw/WildAnySplat" target="_blank" rel="noopener noreferrer" title="Try WildAnySplat in your browser" class="nerfies-btn">
+          <span aria-hidden="true" class="text-lg leading-none">🤗</span>
+          <span>Demo</span>
+        </a>
+      </div>
     </div>
   </header>
 
